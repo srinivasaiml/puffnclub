@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@/context/StoreProvider';
+import { Product } from '@/lib/data';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ProductModal = () => {
@@ -170,7 +171,7 @@ const ProductModal = () => {
                   <span className="text-accent text-[10px] uppercase font-bold tracking-[1px]">Size Guide</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {p.sizes.map(size => (
+                  {p.sizes.map((size: string) => (
                     <button
                       key={size}
                       className={`h-11 px-4 min-w-[50px] rounded-xl border-2 font-bold text-sm transition-all active:scale-90 ${selectedSize === size ? 'bg-accent border-accent text-bg shadow-lg' : 'bg-card border-border text-muted hover:border-accent'}`}
@@ -277,7 +278,15 @@ const ProductModal = () => {
 // Reusable details block for desktop
 const ModalDetails = ({
   p, selectedSize, setSelectedSize, qty, setQty, handleAddToCart, onClose
-}: any) => (
+}: {
+  p: Product;
+  selectedSize: string;
+  setSelectedSize: (s: string) => void;
+  qty: number;
+  setQty: (q: any) => void;
+  handleAddToCart: () => void;
+  onClose: () => void;
+}) => (
   <div>
     <div className="flex justify-between items-start mb-4">
       <div>
@@ -303,7 +312,7 @@ const ModalDetails = ({
         <span className="text-accent text-[11px] underline cursor-pointer uppercase font-bold tracking-[1px]">Size Guide</span>
       </div>
       <div className="grid grid-cols-5 gap-3">
-        {p.sizes.map(size => (
+        {p.sizes.map((size: string) => (
           <button
             key={size}
             className={`h-12 rounded-xl border-2 font-bold transition-all ${selectedSize === size ? 'bg-accent border-accent text-bg shadow-lg scale-105' : 'bg-card border-border text-muted hover:border-accent'}`}

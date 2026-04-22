@@ -13,7 +13,7 @@ export interface Product {
   colors: string[];
   rating: number;
   reviews: number;
-  details: string[][];
+  details: [string, string][];
   reviewList: {
     name: string;
     date: string;

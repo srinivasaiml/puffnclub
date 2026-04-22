@@ -366,7 +366,7 @@ export default function Hero() {
 
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [slide, setSlide] = useState(0);
-  const timer = useRef<ReturnType<typeof setInterval>>();
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!titleRef.current) return;
@@ -382,12 +382,12 @@ export default function Hero() {
 
   useEffect(() => {
     timer.current = setInterval(() => setSlide(p => (p + 1) % BG_IMAGES.length), 5500);
-    return () => clearInterval(timer.current);
+    return () => { if (timer.current) clearInterval(timer.current); };
   }, []);
 
   const goSlide = (i: number) => {
     setSlide(i);
-    clearInterval(timer.current);
+    if (timer.current) clearInterval(timer.current);
     timer.current = setInterval(() => setSlide(p => (p + 1) % BG_IMAGES.length), 5500);
   };
 
