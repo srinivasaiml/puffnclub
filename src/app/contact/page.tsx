@@ -125,7 +125,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-muted mb-1">WhatsApp</p>
-                  <a href="https://wa.me/918331915339" target="_blank" className="text-warm font-medium hover:text-accent transition-colors">+91 83319 15339</a>
+                  <a href="https://wa.me/917901014143" target="_blank" className="text-warm font-medium hover:text-accent transition-colors">+91 79010 14143</a>
                 </div>
               </div>
             </div>

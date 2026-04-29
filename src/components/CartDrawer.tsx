@@ -67,7 +67,7 @@ const CartDrawer = () => {
       msg += `📦 *${i + 1}. ${item.name}*\n   Size: ${item.size} | Qty: ${item.qty}\n   ₹${(item.priceNum * item.qty).toLocaleString()}\n\n`;
     });
     msg += `━━━━━━━━━━━━━━━\n*TOTAL: ₹${total.toLocaleString()}* (Shipping FREE)\n✅ Please confirm!`;
-    window.open(`https://wa.me/918331915339?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/917901014143?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
   const handleCODConfirm = () => {
@@ -100,7 +100,7 @@ const CartDrawer = () => {
     msg += `*GRAND TOTAL: ₹${billTotal.toLocaleString()}*\n`;
     msg += "━━━━━━━━━━━━━━━\n";
     
-    window.open(`https://wa.me/918331915339?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/917901014143?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
   const close = () => { setIsCartOpen(false); setStep('cart'); };

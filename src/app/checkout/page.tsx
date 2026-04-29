@@ -448,9 +448,17 @@ export default function CheckoutPage() {
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
                   <div className="flex items-center justify-between mb-8">
                     <h2 className="text-2xl font-bebas tracking-[3px] text-[#1a1714]">Payment Method</h2>
-                    <div className="flex gap-2">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-4 opacity-50" />
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6 opacity-50" />
+                    <div className="flex gap-5 items-center">
+                      {/* Visa SVG */}
+                      <svg className="h-4 w-auto opacity-40 hover:opacity-100 transition-all cursor-help" viewBox="0 0 500 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M192.41 155.432H156.417L178.932 15.4316H214.925L192.41 155.432ZM360.334 18.0674C351.996 14.7773 340.643 12.1406 327.351 12.1406C291.681 12.1406 266.452 31.0664 266.195 58.2617C265.945 78.3301 284.053 89.5078 297.777 96.2227C311.859 103.113 316.611 107.41 316.551 113.488C316.453 122.785 305.418 126.969 295.148 126.969C279.797 126.969 270.926 124.672 263.156 121.285L256.32 153.227C265.082 157.262 278.43 160.551 292.293 160.551C330.402 160.551 355.223 141.715 355.594 112.566C355.77 80.0352 312.152 77.2969 312.441 60.1016C312.551 54.8945 317.652 49.3086 328.613 47.8867C334.051 47.1953 348.91 46.5117 367.012 54.8633L373.812 23.3438L360.334 18.0674ZM477.586 15.4316H449.695C441.117 15.4316 433.898 20.4102 430.566 28.3242L378.117 155.432H415.867L423.375 134.402H469.375L473.715 155.432H506.43L477.586 15.4316ZM433.375 106.398L452.922 51.5234L464.086 106.398H433.375ZM131.785 15.4316L96.2344 111.453L91.9336 89.2812C84.3438 63.457 60.375 36.7852 34.0469 22.8438L66.7148 155.432H105.152L162.336 15.4316H131.785ZM53.6484 15.4316L0 15.4316L0.746094 18.9375C41.6797 29.3906 68.8047 62.6172 80.0078 92.9375L68.8125 36.0039C66.8633 22.332 57.8594 16.0352 53.6484 15.4316Z" fill="#1a1714"/>
+                      </svg>
+                      {/* Mastercard SVG */}
+                      <svg className="h-7 w-auto opacity-40 hover:opacity-100 transition-all cursor-help" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="8" cy="12" r="7" fill="#EB001B" />
+                        <circle cx="16" cy="12" r="7" fill="#F79E1B" opacity="0.8" />
+                      </svg>
+                      <span className="text-[10px] font-sans tracking-[3px] text-[#1a1714]/30 uppercase font-bold">SECURE PAYMENT</span>
                     </div>
                   </div>
 

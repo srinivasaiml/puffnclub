@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import Preloader from "@/components/Preloader";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import ScratchCard from "@/components/ScratchCard";
+import SmoothScroll from "@/components/SmoothScroll";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -46,20 +47,22 @@ export default function RootLayout({
       </head>
       <body className={`${bebas.variable} ${spaceGrotesk.variable} font-space antialiased`}>
         <StoreProvider>
-          <Preloader />
-          <Navbar />
-          {children}
-          <FloatingWhatsApp />
-          <ScratchCard />
+          <SmoothScroll>
+            <Preloader />
+            <Navbar />
+            {children}
+            <FloatingWhatsApp />
+            <ScratchCard />
 
 
 
-          <Footer />
-          
-          <ProductModal />
-          <CartDrawer />
-          <SearchOverlay />
-          <Toast />
+            <Footer />
+            
+            <ProductModal />
+            <CartDrawer />
+            <SearchOverlay />
+            <Toast />
+          </SmoothScroll>
         </StoreProvider>
       </body>
     </html>
