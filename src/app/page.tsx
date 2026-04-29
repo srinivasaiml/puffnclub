@@ -14,13 +14,6 @@ import Offers from "@/components/Offers";
 import ExecutiveImpactCarousel from "@/components/ExecutiveImpactCarousel";
 import FeaturedProducts from "@/components/FeaturedProducts";
 
-const fadeInUp: HTMLMotionProps<"div"> = {
-  initial: { opacity: 0, y: 80 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-150px" },
-  transition: { duration: 1.5, ease: [0.16, 1, 0.3, 1] as any }
-};
-
 export default function Home() {
   return (
     <main className="relative bg-bg min-h-screen">
@@ -30,11 +23,22 @@ export default function Home() {
         <Marquee items={["Premium Cotton", "Reasonable Prices", "Sustainable Fabric", "Modern Fit", "Handcrafted"]} />
       </div>
 
-      <motion.div {...fadeInUp} className="py-20 bg-bg">
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+        className="py-20 bg-bg"
+      >
         <FeaturedProducts />
       </motion.div>
       
-      <motion.div {...fadeInUp}>
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <GapSection 
           text="VORTEX ORIGINS" 
           lineWidth="50%"
@@ -42,11 +46,21 @@ export default function Home() {
         />
       </motion.div>
       
-      <motion.div {...fadeInUp}>
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <Values />
       </motion.div>
       
-      <motion.div {...fadeInUp}>
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <GapSection 
           text="LATEST DROPS" 
           lineWidth="70%"
@@ -54,7 +68,12 @@ export default function Home() {
         />
       </motion.div>
       
-      <motion.div {...fadeInUp}>
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <Collection />
       </motion.div>
       
@@ -65,15 +84,30 @@ export default function Home() {
         />
       </div>
 
-      <motion.div {...fadeInUp}>
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <QueueScroll />
       </motion.div>
       
-      <motion.div {...fadeInUp}>
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <ExecutiveImpactCarousel />
       </motion.div>
       
-      <motion.div {...fadeInUp}>
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <GapSection 
           text="COMMUNITY" 
           lineWidth="60%"
@@ -81,15 +115,30 @@ export default function Home() {
         />
       </motion.div>
       
-      <motion.div {...fadeInUp}>
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <Testimonials />
       </motion.div>
       
-      <motion.div {...fadeInUp}>
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <SocialGallery />
       </motion.div>
       
-      <motion.div {...fadeInUp}>
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <GapSection 
           text="JOIN THE VORTEX" 
           lineWidth="65%"
@@ -97,7 +146,12 @@ export default function Home() {
         />
       </motion.div>
       
-      <motion.div {...fadeInUp}>
+      <motion.div 
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-150px" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <Offers />
       </motion.div>
     </main>
