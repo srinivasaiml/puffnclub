@@ -74,7 +74,7 @@ const CollectionPage = () => {
     ];
   }, [dynamicProducts]);
 
-  const letterVariants = {
+  const letterVariants: any = {
     hidden: { y: 80, opacity: 0, rotateX: -90 },
     visible: (i: number) => ({
       y: 0,
@@ -83,7 +83,7 @@ const CollectionPage = () => {
       transition: {
         duration: 0.8,
         delay: i * 0.04,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        ease: [0.25, 0.46, 0.45, 0.94] as any
       }
     })
   };
@@ -127,7 +127,7 @@ const CollectionPage = () => {
             <motion.span
               variants={{
                 hidden: { width: 0 },
-                visible: { width: 60, transition: { duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] } }
+                visible: { width: 60, transition: { duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] as any } }
               }}
               className="block h-[2px] bg-[#c49a6c]"
             />
@@ -318,7 +318,7 @@ function BentoCard({ category, index, hoveredIndex, setHoveredIndex, className }
       transition={{
         duration: 0.7,
         delay: index * 0.08,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        ease: [0.25, 0.46, 0.45, 0.94] as any
       }}
       className={`relative overflow-hidden group cursor-pointer rounded-sm border border-white/[0.04] ${className}`}
       onMouseEnter={() => setHoveredIndex(index)}
@@ -332,7 +332,7 @@ function BentoCard({ category, index, hoveredIndex, setHoveredIndex, className }
           scale: isHovered ? 1.08 : 1,
           filter: anyHovered && !isHovered ? "brightness(0.5)" : "brightness(0.7)"
         }}
-        transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+        transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as any }}
         className="absolute inset-0"
       >
         <img
@@ -372,7 +372,7 @@ function BentoCard({ category, index, hoveredIndex, setHoveredIndex, className }
             y: isHovered ? -4 : 0,
             letterSpacing: isHovered ? "6px" : "3px"
           }}
-          transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as any }}
           className="font-bebas text-[28px] md:text-[40px] leading-none tracking-[3px] uppercase text-white"
         >
           {category.title}
