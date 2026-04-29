@@ -45,7 +45,7 @@ const SearchOverlay = () => {
         </button>
 
         {results.length > 0 && (
-          <div className="mt-3 bg-card border border-border rounded-xl overflow-hidden max-h-[400px] overflow-y-auto">
+          <div className="mt-3 bg-card border border-border rounded-xl overflow-hidden max-h-[400px] overflow-y-auto" data-lenis-prevent>
             {results.map(p => (
               <div 
                 key={p.id} 

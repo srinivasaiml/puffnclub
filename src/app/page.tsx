@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
 import GapSection from "@/components/GapSection";
@@ -14,11 +14,11 @@ import Offers from "@/components/Offers";
 import ExecutiveImpactCarousel from "@/components/ExecutiveImpactCarousel";
 import FeaturedProducts from "@/components/FeaturedProducts";
 
-const fadeInUp = {
+const fadeInUp: HTMLMotionProps<"div"> = {
   initial: { opacity: 0, y: 80 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: "-150px" },
-  transition: { duration: 1.5, ease: [0.16, 1, 0.3, 1] }
+  transition: { duration: 1.5, ease: [0.16, 1, 0.3, 1] as any }
 };
 
 export default function Home() {

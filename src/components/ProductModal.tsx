@@ -78,7 +78,7 @@ const ProductModal = () => {
             {/* Left: Image Gallery */}
             <div className="w-[45%] bg-card p-6 flex gap-4 border-r border-border h-full relative">
               {/* Vertical Thumbnails */}
-              <div className="w-20 flex flex-col gap-3 overflow-y-auto custom-scroll pr-2">
+              <div className="w-20 flex flex-col gap-3 overflow-y-auto custom-scroll pr-2" data-lenis-prevent>
                 {p.images.map((img, i) => (
                   <button
                     key={i}
@@ -105,7 +105,7 @@ const ProductModal = () => {
             </div>
 
             {/* Right: Details */}
-            <div className="w-[55%] p-8 overflow-y-auto custom-scroll bg-bg relative">
+            <div className="w-[55%] p-8 overflow-y-auto custom-scroll bg-bg relative" data-lenis-prevent>
               <DesktopDetails p={p} selectedSize={selectedSize} setSelectedSize={setSelectedSize} selectedColor={selectedColor} setSelectedColor={setSelectedColor} qty={qty} setQty={setQty} handleAddToCart={handleAddToCart} handleBuyNow={handleBuyNow} />
             </div>
           </motion.div>
@@ -136,7 +136,7 @@ const ProductModal = () => {
             </div>
 
             {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto pb-32">
+            <div className="flex-1 overflow-y-auto pb-32" data-lenis-prevent>
               <MobileDetails p={p} activeImg={activeImg} setActiveImg={setActiveImg} selectedSize={selectedSize} setSelectedSize={setSelectedSize} selectedColor={selectedColor} setSelectedColor={setSelectedColor} qty={qty} setQty={setQty} />
             </div>
 

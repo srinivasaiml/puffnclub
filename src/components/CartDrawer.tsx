@@ -132,7 +132,7 @@ const CartDrawer = () => {
                     </button>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5">
+                  <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5" data-lenis-prevent>
                     {cart.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center gap-4 py-20">
                         <i className="fas fa-shopping-bag text-6xl text-white/10"></i>
