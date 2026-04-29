@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = () => {
   const socialLinks = [
-    { name: 'instagram', url: 'https://www.instagram.com/puffnclub_official?igsh=MTZmdDZybzJxaWRpaQ==' },
+    { name: 'instagram', url: 'https://www.instagram.com/vortex_official?igsh=MTZmdDZybzJxaWRpaQ==' },
     { name: 'twitter', url: '#' },
     { name: 'youtube', url: '#' },
     { name: 'pinterest', url: '#' }
@@ -13,8 +13,8 @@ const Footer = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-10 mb-[50px]">
         <div className="footer-brand">
           <div className="flex items-center gap-2 font-bebas text-[32px] tracking-[3px] text-accent mb-3">
-            <img src="/puffn-logo.svg" alt="" className="w-10 h-10 object-contain brightness-0" />
-            <span>PUFFNCLUB</span>
+            <img src="/kite-logo.png" alt="" className="w-10 h-10 object-contain brightness-0" />
+            <span>VORTEX</span>
 
 
           </div>
@@ -66,7 +66,7 @@ const Footer = () => {
       </div>
 
       <div className="border-t border-border pt-5 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-        <span className="text-muted text-[12px]">© 2026 PuffinClub. All rights reserved.</span>
+        <span className="text-muted text-[12px]">© 2026 VORTEX. All rights reserved.</span>
         <span className="text-muted text-[12px]">Designed with <i className="fas fa-heart text-accent text-[10px]"></i> for men who care about what they wear.</span>
       </div>
     </footer>

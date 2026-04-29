@@ -115,7 +115,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-muted mb-1">Mail us at</p>
-                  <a href="mailto:hello@puffnclub.com" className="text-warm font-medium hover:text-accent transition-colors">hello@puffnclub.com</a>
+                  <a href="mailto:hello@vortex.com" className="text-warm font-medium hover:text-accent transition-colors">hello@vortex.com</a>
                 </div>
               </div>
 

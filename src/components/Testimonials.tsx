@@ -7,7 +7,7 @@ const testimonials = [
   {
     name: 'Ava Green',
     username: '@ava',
-    body: 'Puffinclub clothes made my wardrobe 10x better! The oversized fit is just incredible.',
+    body: 'VORTEX clothes made my wardrobe 10x better! The oversized fit is just incredible.',
     img: 'https://randomuser.me/api/portraits/women/32.jpg',
     country: '🇦🇺 Australia',
   },

@@ -1,22 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { 
-  SpeakerWaveIcon, 
-  ComputerDesktopIcon, 
-  DevicePhoneMobileIcon, 
-  ClockIcon, 
-  CameraIcon,
-  MicrophoneIcon
-} from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 const categories = [
-  { name: "Audio", icon: SpeakerWaveIcon },
-  { name: "Computing", icon: ComputerDesktopIcon },
-  { name: "Mobile", icon: DevicePhoneMobileIcon },
-  { name: "Wearables", icon: ClockIcon },
-  { name: "Photography", icon: CameraIcon },
-  { name: "Microphones", icon: MicrophoneIcon },
+  { name: "Hoodies", icon: "fas fa-hoodie", href: "/collection/hoodies" },
+  { name: "T-Shirts", icon: "fas fa-tshirt", href: "/collection/tshirts" },
+  { name: "Jackets", icon: "fas fa-vest", href: "/collection/jackets" },
+  { name: "Shirts", icon: "fas fa-shirt", href: "/collection/shirts" },
+  { name: "Printed", icon: "fas fa-palette", href: "/collection/printed-tshirts" },
+  { name: "Shop All", icon: "fas fa-shopping-bag", href: "/collection/all" },
 ];
 
 export default function Categories() {
@@ -29,20 +22,21 @@ export default function Categories() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {categories.map((cat, i) => (
-            <motion.div
-              key={cat.name}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
-              whileHover={{ y: -5, scale: 1.05 }}
-              className="flex flex-col items-center justify-center p-6 glass-card cursor-pointer hover:border-indigo-500/50 transition-colors group"
-            >
-              <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-indigo-500/20 transition-colors">
-                <cat.icon className="w-8 h-8 text-foreground/80 group-hover:text-indigo-400 transition-colors" />
-              </div>
-              <span className="font-medium text-sm text-foreground/90 group-hover:text-white transition-colors">{cat.name}</span>
-            </motion.div>
+            <Link key={cat.name} href={cat.href}>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
+                whileHover={{ y: -5, scale: 1.05 }}
+                className="flex flex-col items-center justify-center p-6 glass-card cursor-pointer hover:border-accent transition-colors group"
+              >
+                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
+                  <i className={`${cat.icon} text-2xl text-warm group-hover:text-accent transition-colors`}></i>
+                </div>
+                <span className="font-medium text-sm text-warm group-hover:text-accent transition-colors">{cat.name}</span>
+              </motion.div>
+            </Link>
           ))}
         </div>
       </div>

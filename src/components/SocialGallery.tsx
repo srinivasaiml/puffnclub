@@ -38,7 +38,7 @@ const SocialGallery = () => {
         <div className="text-center mb-16 reveal">
           <p className="section-label">Follow The Culture</p>
           <h2 className="section-title">As Seen On Instagram<span className="text-accent">.</span></h2>
-          <p className="text-muted max-w-[600px] mx-auto -mt-6">Tag <span className="text-accent font-bold">@puffinclub</span> to get featured on our official store wall.</p>
+          <p className="text-muted max-w-[600px] mx-auto -mt-6">Tag <span className="text-accent font-bold">@vortex_official</span> to get featured on our official store wall.</p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -62,7 +62,7 @@ const SocialGallery = () => {
         
         <div className="mt-12 text-center reveal">
           <a 
-            href="https://www.instagram.com/puffnclub_official?igsh=MTZmdDZybzJxaWRpaQ==" 
+            href="https://www.instagram.com/vortex_official?igsh=MTZmdDZybzJxaWRpaQ==" 
             target="_blank"
             rel="noopener noreferrer"
             className="btn-outline inline-flex items-center gap-3"

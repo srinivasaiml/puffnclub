@@ -1,31 +1,25 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-/* 
-  ---break--- 
-*/
-@custom-variant dark (&:is(.dark *));
 
-/* 
-  PuffinClub Design System - Tailwind v4 
-*/
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   /* Colors */
-  --color-bg: #f5f0e8;
-  --color-bg2: #ede8e0;
+  --color-bg: #ffffff;
+  --color-bg2: #f8f8f8;
   --color-card: #ffffff;
-  --color-card-foreground: #1a1714;
-  --color-border: #d6d0c4;
-  --color-accent: #c49a6c;
-  --color-accent2: #8b6e4e;
-  --color-discount: #d94040;
-  --color-text: #1a1714;
-  --color-muted: #7a7168;
-  --color-muted-foreground: #a19589;
-  --color-background: #f5f0e8;
-  --color-foreground: #1a1714;
-  --color-warm: #0d0b09;
+  --color-card-foreground: #111111;
+  --color-border: #eeeeee;
+  --color-accent: #000000;
+  --color-accent2: #444444;
+  --color-discount: #ff4444;
+  --color-text: #111111;
+  --color-muted: #666666;
+  --color-muted-foreground: #999999;
+  --color-background: #ffffff;
+  --color-foreground: #111111;
+  --color-warm: #000000;
   --color-whatsapp: #25D366;
 
   /* Fonts */
@@ -51,16 +45,16 @@
 
 /* Base Styles & Variables */
 :root {
-  --bg: #f5f0e8;
-  --bg2: #ede8e0;
+  --bg: #ffffff;
+  --bg2: #f8f8f8;
   --card: #ffffff;
-  --border: #d6d0c4;
-  --accent: #c49a6c;
-  --accent2: #8b6e4e;
-  --discount: #d94040;
-  --text: #1a1714;
-  --muted: #7a7168;
-  --warm: #0d0b09;
+  --border: #eeeeee;
+  --accent: #000000;
+  --accent2: #444444;
+  --discount: #ff4444;
+  --text: #111111;
+  --muted: #666666;
+  --warm: #000000;
   --whatsapp: #25D366;
   --gap: 1rem;
   --duration: 40s;
@@ -129,7 +123,7 @@
   .btn-primary:hover {
     background: var(--accent2);
     transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(196, 154, 108, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   }
 
   .btn-outline {
@@ -188,7 +182,7 @@
     height: auto;
     z-index: -1;
     filter: blur(15px);
-    opacity: 0.2;
+    opacity: 0.1;
     pointer-events: none;
     object-fit: contain;
     animation: badgeSpin 20s linear infinite;
@@ -204,15 +198,9 @@
     text-transform: uppercase;
     position: relative;
     z-index: 2;
-    /* Premium 3D Extrusion Style */
     text-shadow: 
-      1px 1px 0px rgba(196, 154, 108, 0.2),
-      2px 2px 0px rgba(0, 0, 0, 0.8),
-      3px 3px 0px rgba(0, 0, 0, 0.8),
-      4px 4px 0px rgba(0, 0, 0, 0.8),
-      5px 5px 0px rgba(0, 0, 0, 0.8),
-      0 20px 50px rgba(0, 0, 0, 0.8);
-    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
+      1px 1px 0px rgba(0, 0, 0, 0.1),
+      0 20px 50px rgba(0, 0, 0, 0.1);
   }
 
   @media (max-width: 768px) {

@@ -39,7 +39,7 @@ export default function AboutBrand() {
               <span className="text-gradient">Digital Lifestyle.</span>
             </h3>
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed max-w-lg">
-              At Aura, we believe that technology should be an extension of yourself. We're dedicated to pushing the boundaries of design and innovation.
+              At VORTEX, we believe that style should be an extension of yourself. We're dedicated to pushing the boundaries of design and innovation.
             </p>
 
             <div className="space-y-8">

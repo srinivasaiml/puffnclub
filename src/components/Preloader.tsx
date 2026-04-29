@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 const Preloader = () => {
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState("");
-  const fullText = "PUFFNCLUB";
+  const fullText = "VORTEX";
 
 
 
@@ -34,12 +34,12 @@ const Preloader = () => {
   if (!loading) return null;
 
   return (
-    <div className={`fixed inset-0 z-[9999] bg-bg flex flex-col items-center justify-center transition-opacity duration-1000 ${loading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+    <div className={`fixed inset-0 z-[9999] bg-[#ffffff] flex flex-col items-center justify-center transition-opacity duration-1000 ${loading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
       <div className="relative mb-6">
         <div className="absolute inset-[-30px] bg-accent/10 blur-[60px] rounded-full animate-pulse"></div>
         <img
-          src="/puffn-logo.svg"
-          alt="PUFFNCLUB Logo"
+          src="/kite-logo.png"
+          alt="VORTEX Logo"
           className="w-[100px] h-[100px] relative z-10 brightness-200"
         />
       </div>

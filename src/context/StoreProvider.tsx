@@ -29,6 +29,8 @@ interface StoreContextType {
   showToast: (msg: string) => void;
   wishlist: number[];
   toggleWishlist: (productId: number) => void;
+  user: any;
+  setUser: (user: any) => void;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -40,6 +42,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [toast, setToast] = useState({ msg: "", show: false });
+  const [user, setUser] = useState<any>(null);
 
   const showToast = (msg: string) => {
     setToast({ msg, show: true });
@@ -53,9 +56,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       );
 
       if (existingIndex > -1) {
-        const newCart = [...prev];
-        newCart[existingIndex].qty += qty;
-        return newCart;
+        return prev.map((item, i) => 
+          i === existingIndex ? { ...item, qty: item.qty + qty } : item
+        );
       }
 
       return [...prev, {
@@ -80,9 +83,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const updateCartQty = (index: number, delta: number) => {
     setCart(prev => {
-      const newCart = [...prev];
-      newCart[index].qty = Math.max(1, Math.min(10, newCart[index].qty + delta));
-      return newCart;
+      return prev.map((item, i) => {
+        if (i !== index) return item;
+        return {
+          ...item,
+          qty: Math.max(1, Math.min(10, item.qty + delta))
+        };
+      });
     });
   };
 
@@ -104,7 +111,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       isSearchOpen, setIsSearchOpen,
       selectedProduct, setSelectedProduct,
       toast, showToast,
-      wishlist, toggleWishlist
+      wishlist, toggleWishlist,
+      user, setUser
     }}>
       {children}
     </StoreContext.Provider>

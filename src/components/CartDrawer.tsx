@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useStore } from '@/context/StoreProvider';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 const TICKET_STYLES = `
 .ticket-mask{position:absolute;overflow:hidden;display:flex;justify-content:center;mask-image:linear-gradient(rgba(0,0,0,0.1) 0%,white 20px);perspective:1000px;top:0;left:0;right:0;height:100%;pointer-events:none}
@@ -14,34 +15,54 @@ const TICKET_STYLES = `
 @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-12px)}100%{transform:translateY(0)}}
 .front,.back{display:inline-block;backface-visibility:hidden;transform-style:preserve-3d}
 .back{position:absolute;top:0;left:0;transform:rotateY(-180deg)}
-.puff-ticket{display:block;position:relative;width:260px;border-radius:10px 10px 0 0;background:linear-gradient(to bottom,white,#dcfffd);color:#000;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,0.5)}
-.puff-ticket::before{content:"";position:absolute;inset:0;border-radius:10px 10px 0 0;background:radial-gradient(at 30% -5%,#90f1f1,#d3ccf0,rgba(255,255,255,0) 25%),radial-gradient(at 70% 0%,#d3ccf0,rgba(255,255,255,0) 20%),linear-gradient(75deg,#90f1f1 5%,rgba(255,255,255,0),#aad1f0,rgba(255,255,255,0),#e9d0ed,rgba(255,255,255,0),#d3ccf0,rgba(255,255,255,0),#c4f2e5 90%)}
-.puff-ticket-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px dashed rgba(0,0,0,0.3);position:relative;height:50px}
-.puff-ticket-header::before,.puff-ticket-header::after{content:"";display:block;width:12px;height:12px;background:#f5f0e8;position:absolute;right:-7px;border-radius:50%;bottom:-6px;z-index:11}
-.puff-ticket-header::after{left:-7px}
+.vortex-ticket{display:block;position:relative;width:260px;border-radius:10px 10px 0 0;background:linear-gradient(to bottom,white,#dcfffd);color:#000;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,0.5)}
+.vortex-ticket::before{content:"";position:absolute;inset:0;border-radius:10px 10px 0 0;background:radial-gradient(at 30% -5%,#90f1f1,#d3ccf0,rgba(255,255,255,0) 25%),radial-gradient(at 70% 0%,#d3ccf0,rgba(255,255,255,0) 20%),linear-gradient(75deg,#90f1f1 5%,rgba(255,255,255,0),#aad1f0,rgba(255,255,255,0),#e9d0ed,rgba(255,255,255,0),#d3ccf0,rgba(255,255,255,0),#c4f2e5 90%)}
+.vortex-ticket-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px dashed rgba(0,0,0,0.3);position:relative;height:50px}
+.vortex-ticket-header::before,.vortex-ticket-header::after{content:"";display:block;width:12px;height:12px;background:#f5f0e8;position:absolute;right:-7px;border-radius:50%;bottom:-6px;z-index:11}
+.vortex-ticket-header::after{left:-7px}
 .ticket-brand{font-weight:800;font-size:13px;letter-spacing:2px;color:#1a1a2e}
 .ticket-sub{font-size:9px;letter-spacing:3px;color:rgba(0,0,0,0.4);font-weight:400}
-.puff-barcode{box-shadow:1px 0 0 1px,5px 0 0 1px,10px 0 0 1px,11px 0 0 1px,15px 0 0 1px,18px 0 0 1px,22px 0 0 1px,23px 0 0 1px,26px 0 0 1px,30px 0 0 1px,35px 0 0 1px,37px 0 0 1px,41px 0 0 1px,44px 0 0 1px,47px 0 0 1px,51px 0 0 1px,56px 0 0 1px,59px 0 0 1px,64px 0 0 1px,68px 0 0 1px,72px 0 0 1px,74px 0 0 1px,77px 0 0 1px;display:inline-block;height:26px;width:0}
-.puff-ticket-body{padding:16px;min-height:140px;position:relative}
-.puff-ticket::after{content:"";display:block;position:absolute;bottom:-14px;left:0;background:-webkit-linear-gradient(-135deg,#dcfffd 50%,transparent 50%) 0 50%,-webkit-linear-gradient(-45deg,#dcfffd 50%,transparent 50%) 0 50%,transparent;background-repeat:repeat-x;background-size:14px 14px,14px 14px;height:14px;width:100%}
-.puff-reflex{pointer-events:none;position:absolute;inset:0;bottom:-5px;z-index:10;overflow:hidden}
-.puff-reflex::before{content:"";position:absolute;width:260px;background:linear-gradient(to right,rgba(221,249,255,.4) 10%,rgba(221,245,255,.7) 60%,rgba(221,246,255,.6) 60%,rgba(221,255,254,.4) 90%);top:-10%;bottom:-10%;left:-130%;transform:translateX(0) skew(-30deg);transition:all .7s ease}
-.float:hover .puff-reflex::before{transform:translate(280%,0) skew(-30deg)}
+.vortex-barcode{box-shadow:1px 0 0 1px,5px 0 0 1px,10px 0 0 1px,11px 0 0 1px,15px 0 0 1px,18px 0 0 1px,22px 0 0 1px,23px 0 0 1px,26px 0 0 1px,30px 0 0 1px,35px 0 0 1px,37px 0 0 1px,41px 0 0 1px,44px 0 0 1px,47px 0 0 1px,51px 0 0 1px,56px 0 0 1px,59px 0 0 1px,64px 0 0 1px,68px 0 0 1px,72px 0 0 1px,74px 0 0 1px,77px 0 0 1px;display:inline-block;height:26px;width:0}
+.vortex-ticket-body{padding:16px;min-height:140px;position:relative}
+.vortex-ticket::after{content:"";display:block;position:absolute;bottom:-14px;left:0;background:-webkit-linear-gradient(-135deg,#dcfffd 50%,transparent 50%) 0 50%,-webkit-linear-gradient(-45deg,#dcfffd 50%,transparent 50%) 0 50%,transparent;background-repeat:repeat-x;background-size:14px 14px,14px 14px;height:14px;width:100%}
+.vortex-reflex{pointer-events:none;position:absolute;inset:0;bottom:-5px;z-index:10;overflow:hidden}
+.vortex-reflex::before{content:"";position:absolute;width:260px;background:linear-gradient(to right,rgba(221,249,255,.4) 10%,rgba(221,245,255,.7) 60%,rgba(221,246,255,.6) 60%,rgba(221,255,254,.4) 90%);top:-10%;bottom:-10%;left:-130%;transform:translateX(0) skew(-30deg);transition:all .7s ease}
+.float:hover .vortex-reflex::before{transform:translate(280%,0) skew(-30deg)}
 `;
 
 const CartDrawer = () => {
-  const { cart, isCartOpen, setIsCartOpen, removeFromCart, updateCartQty, showToast } = useStore();
+  const { cart, isCartOpen, setIsCartOpen, removeFromCart, updateCartQty, showToast, user } = useStore();
+  const router = useRouter();
   const [step, setStep] = useState<'cart' | 'confirm' | 'success'>('cart');
   const [orderId] = useState(() => Math.floor(100000 + Math.random() * 900000));
   const [billCart, setBillCart] = useState<typeof cart>([]);
   const [billTotal, setBillTotal] = useState(0);
 
+  const handleCheckout = (path: string | null = null, action: (() => void) | null = null) => {
+    if (!user) {
+      showToast("Please login to proceed with checkout");
+      setIsCartOpen(false);
+      router.push('/auth');
+      return;
+    }
+    if (path) {
+      setIsCartOpen(false);
+      router.push(path);
+    } else if (action) {
+      action();
+    }
+  };
+
   const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
   const total = cart.reduce((acc, item) => acc + (item.priceNum * item.qty), 0);
 
   const sendToWhatsApp = () => {
+    if (!user) {
+      handleCheckout(null, null);
+      return;
+    }
     if (!cart.length) return;
-    let msg = "🛒 *PUFFNCLUB — ORDER*\n━━━━━━━━━━━━━━━\n\n";
+    let msg = "🛒 *VORTEX — ORDER*\n━━━━━━━━━━━━━━━\n\n";
     cart.forEach((item, i) => {
       msg += `📦 *${i + 1}. ${item.name}*\n   Size: ${item.size} | Qty: ${item.qty}\n   ₹${(item.priceNum * item.qty).toLocaleString()}\n\n`;
     });
@@ -57,9 +78,9 @@ const CartDrawer = () => {
   };
 
   const sendBillToWhatsApp = () => {
-    let msg = "🧾 *PUFFNCLUB — NEW COD ORDER*\n";
+    let msg = "🧾 *VORTEX — NEW COD ORDER*\n";
     msg += "━━━━━━━━━━━━━━━\n\n";
-    msg += `*Order ID:* #PFC${orderId}\n`;
+    msg += `*Order ID:* #VTX${orderId}\n`;
     msg += `*Payment Mode:* Cash on Delivery (COD)\n`;
     msg += `*Expected Delivery:* 3-5 Business Days\n\n`;
     
@@ -130,9 +151,9 @@ const CartDrawer = () => {
                           <div className="flex items-center justify-between">
                             <span className="font-black text-[#c49a6c] text-base">₹{item.priceNum.toLocaleString()}</span>
                             <div className="flex items-center bg-black/5 rounded-lg border border-black/10 overflow-hidden">
-                              <button className="w-8 h-8 flex items-center justify-center hover:bg-black/10 transition-colors" onClick={() => updateCartQty(idx, -1)}>−</button>
+                              <button type="button" className="w-8 h-8 flex items-center justify-center hover:bg-black/10 transition-colors" onClick={(e) => { e.stopPropagation(); updateCartQty(idx, -1); }}>−</button>
                               <span className="w-8 text-center text-xs font-bold text-[#1a1714]">{item.qty}</span>
-                              <button className="w-8 h-8 flex items-center justify-center hover:bg-black/10 transition-colors" onClick={() => updateCartQty(idx, 1)}>+</button>
+                              <button type="button" className="w-8 h-8 flex items-center justify-center hover:bg-black/10 transition-colors" onClick={(e) => { e.stopPropagation(); updateCartQty(idx, 1); }}>+</button>
                             </div>
                           </div>
                           <button className="text-[9px] text-red-400/40 font-black uppercase tracking-[2px] flex items-center gap-1.5 hover:text-red-400 transition-colors w-fit mt-1" onClick={() => removeFromCart(idx)}>
@@ -157,8 +178,11 @@ const CartDrawer = () => {
                         <button onClick={sendToWhatsApp} className="w-full py-4 bg-[#25D366] text-white rounded-xl font-bold text-[12px] tracking-[2px] uppercase flex items-center justify-center gap-3 hover:brightness-110 active:scale-[0.98] transition-all">
                           <i className="fab fa-whatsapp text-lg"></i> Checkout WhatsApp
                         </button>
-                        <button onClick={() => setStep('confirm')} className="w-full py-4 bg-[#c49a6c] text-[#f5f0e8] rounded-xl font-bold text-[12px] tracking-[2px] uppercase flex items-center justify-center gap-3 hover:bg-[#8b6e4e] active:scale-[0.98] transition-all">
+                        <button onClick={() => handleCheckout(null, () => setStep('confirm'))} className="w-full py-4 bg-[#c49a6c] text-[#f5f0e8] rounded-xl font-bold text-[12px] tracking-[2px] uppercase flex items-center justify-center gap-3 hover:bg-[#8b6e4e] active:scale-[0.98] transition-all">
                           <i className="fas fa-hand-holding-usd text-lg"></i> Cash on Delivery (COD)
+                        </button>
+                        <button onClick={() => handleCheckout('/checkout')} className="w-full py-4 bg-[#1a1714] text-white rounded-xl font-bold text-[12px] tracking-[2px] uppercase flex items-center justify-center gap-3 hover:bg-black active:scale-[0.98] transition-all">
+                          <i className="fas fa-credit-card text-lg"></i> Online Payment
                         </button>
                         <button onClick={close} className="w-full py-3 text-[10px] text-[#7a7168] font-bold uppercase tracking-[3px] hover:text-[#1a1714] transition-colors">
                           Continue Shopping
@@ -206,12 +230,12 @@ const CartDrawer = () => {
                     <div 
                       className="flex items-center gap-3 mt-3 mb-8 bg-black/5 border border-black/10 px-4 py-2 rounded-lg cursor-pointer hover:bg-black/10 transition-colors shadow-lg active:scale-95" 
                       onClick={() => {
-                        navigator.clipboard.writeText(`PFC${orderId}`);
+                        navigator.clipboard.writeText(`VTX${orderId}`);
                         showToast("📋 Order ID copied!");
                       }}
                       title="Copy Order ID"
                     >
-                      <p className="text-[12px] text-[#c49a6c] font-black uppercase tracking-[3px]">#PFC{orderId}</p>
+                      <p className="text-[12px] text-[#c49a6c] font-black uppercase tracking-[3px]">#VTX{orderId}</p>
                       <div className="w-[1px] h-4 bg-black/10"></div>
                       <i className="fas fa-copy text-[#7a7168] text-sm"></i>
                     </div>
@@ -225,16 +249,16 @@ const CartDrawer = () => {
                             <div className="float">
                               {/* FRONT */}
                               <div className="front">
-                                <div className="puff-ticket">
-                                  <div className="puff-reflex"></div>
-                                  <div className="puff-ticket-header">
+                                <div className="vortex-ticket">
+                                  <div className="vortex-reflex"></div>
+                                  <div className="vortex-ticket-header">
                                     <div className="text-left">
-                                      <div className="ticket-brand">PUFFNCLUB</div>
+                                      <div className="ticket-brand">VORTEX</div>
                                       <div className="ticket-sub">ORDER PASS</div>
                                     </div>
-                                    <div className="puff-barcode"></div>
+                                    <div className="vortex-barcode"></div>
                                   </div>
-                                  <div className="puff-ticket-body">
+                                  <div className="vortex-ticket-body">
                                     <div className="text-left mb-3 z-10 relative">
                                       <div className="text-[10px] tracking-[2px] text-gray-400 uppercase">Items</div>
                                       <div className="space-y-1 mt-1 max-h-[80px] overflow-hidden">
@@ -257,13 +281,13 @@ const CartDrawer = () => {
 
                               {/* BACK */}
                               <div className="back">
-                                <div className="puff-ticket">
-                                  <div className="puff-reflex"></div>
-                                  <div className="puff-ticket-header">
-                                    <div className="ticket-brand">PUFFNCLUB</div>
+                                <div className="vortex-ticket">
+                                  <div className="vortex-reflex"></div>
+                                  <div className="vortex-ticket-header">
+                                    <div className="ticket-brand">VORTEX</div>
                                     <div className="text-[9px] text-gray-400">THANK YOU</div>
                                   </div>
-                                  <div className="puff-ticket-body flex flex-col items-center justify-center gap-3">
+                                  <div className="vortex-ticket-body flex flex-col items-center justify-center gap-3">
                                     <div className="text-center">
                                       <div className="text-[10px] tracking-[3px] text-gray-400 uppercase mb-1">Payment Mode</div>
                                       <div className="font-black text-xl text-gray-900">CASH ON DELIVERY</div>

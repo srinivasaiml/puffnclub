@@ -15,8 +15,8 @@ const ProductModal = () => {
   useEffect(() => {
     if (selectedProduct) {
       setActiveImg(selectedProduct.images[0]);
-      setSelectedSize(selectedProduct.sizes[1] || selectedProduct.sizes[0]);
-      setSelectedColor(selectedProduct.colors[0]);
+      setSelectedSize(selectedProduct.sizes[1] || selectedProduct.sizes[0] || "");
+      setSelectedColor(selectedProduct.colors[0] || "");
       setQty(1);
     }
   }, [selectedProduct]);
@@ -38,6 +38,14 @@ const ProductModal = () => {
     setSelectedProduct(null);
   };
 
+  const handleBuyNow = () => {
+    if (selectedProduct) {
+      addToCart(selectedProduct, selectedSize, selectedColor, qty);
+    }
+    // In a real app, this would route directly to checkout
+    setSelectedProduct(null);
+  };
+
   const p = selectedProduct;
 
   return (
@@ -54,48 +62,51 @@ const ProductModal = () => {
             onClick={() => setSelectedProduct(null)}
           />
 
-          {/* DESKTOP: centered modal */}
+          {/* DESKTOP: Advanced E-commerce Layout (Amazon style) */}
           <motion.div
             key="modal-desktop"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.95, y: '-50%', x: '-50%' }}
+            animate={{ opacity: 1, scale: 1, y: '-50%', x: '-50%' }}
+            exit={{ opacity: 0, scale: 0.95, y: '-50%', x: '-50%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-            className="hidden md:flex fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(1100px,96vw)] max-h-[92vh] bg-bg z-[2001] rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.6)] flex-row"
+            className="hidden lg:flex fixed top-1/2 left-1/2 w-[min(1250px,96vw)] h-[min(850px,94vh)] bg-bg z-[2001] rounded-2xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex-row border border-border"
           >
-            {/* Left: Images */}
-            <div className="w-1/2 bg-bg2 p-8 flex flex-col justify-center border-r border-border">
-              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-card border border-border mb-4">
-                <img
-                  src={activeImg || p.images[0]}
-                  alt={p.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&q=90&w=1000";
-                  }}
-                />
-                {p.discount && (
-                  <div className="absolute top-4 left-4 bg-discount text-white text-[10px] font-black p-[4px_10px] rounded-lg tracking-[1px] uppercase">
-                    {p.discount}
-                  </div>
-                )}
-              </div>
-              <div className="flex gap-3 overflow-x-auto pb-2 justify-center">
+            <button className="absolute top-4 right-6 text-muted hover:text-warm text-2xl z-[2002] transition-colors" onClick={() => setSelectedProduct(null)}>
+              <i className="fas fa-times"></i>
+            </button>
+
+            {/* Left: Image Gallery */}
+            <div className="w-[45%] bg-card p-6 flex gap-4 border-r border-border h-full relative">
+              {/* Vertical Thumbnails */}
+              <div className="w-20 flex flex-col gap-3 overflow-y-auto custom-scroll pr-2">
                 {p.images.map((img, i) => (
                   <button
                     key={i}
-                    className={`w-16 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${activeImg === img ? 'border-accent scale-105' : 'border-border opacity-50 hover:opacity-100'}`}
+                    className={`w-full aspect-[3/4] rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${activeImg === img ? 'border-accent shadow-[0_0_10px_rgba(196,154,108,0.3)] scale-105' : 'border-border/50 opacity-60 hover:opacity-100 hover:border-border'}`}
+                    onMouseEnter={() => setActiveImg(img)}
                     onClick={() => setActiveImg(img)}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
+
+              {/* Main Image */}
+              <div className="flex-1 relative rounded-xl overflow-hidden bg-bg2 flex items-center justify-center border border-border/50 group cursor-crosshair">
+                <img
+                  src={activeImg || p.images[0]}
+                  alt={p.name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&q=90&w=1000";
+                  }}
+                />
+              </div>
             </div>
 
             {/* Right: Details */}
-            <div className="w-1/2 p-10 overflow-y-auto custom-scroll">
-              <ModalDetails p={p} selectedSize={selectedSize} setSelectedSize={setSelectedSize} qty={qty} setQty={setQty} handleAddToCart={handleAddToCart} onClose={() => setSelectedProduct(null)} />
+            <div className="w-[55%] p-8 overflow-y-auto custom-scroll bg-bg relative">
+              <DesktopDetails p={p} selectedSize={selectedSize} setSelectedSize={setSelectedSize} selectedColor={selectedColor} setSelectedColor={setSelectedColor} qty={qty} setQty={setQty} handleAddToCart={handleAddToCart} handleBuyNow={handleBuyNow} />
             </div>
           </motion.div>
 
@@ -106,17 +117,18 @@ const ProductModal = () => {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="md:hidden fixed inset-0 bg-bg z-[2001] flex flex-col h-[100dvh]"
+            className="lg:hidden fixed inset-0 bg-bg z-[2001] flex flex-col h-[100dvh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Sticky top bar with close */}
-            <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-border bg-bg z-10">
-              <div>
-                <p className="text-accent text-[9px] tracking-[3px] uppercase font-bold">{p.category}</p>
-                <h2 className="font-bebas text-2xl tracking-[1px] text-warm leading-tight">{p.name}</h2>
+            <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-border bg-bg z-10 shadow-sm">
+              <div className="flex items-center gap-2 text-[10px] text-muted font-bold tracking-widest uppercase">
+                <span>VORTEX</span>
+                <i className="fas fa-chevron-right text-[8px]"></i>
+                <span className="text-accent">{p.category}</span>
               </div>
               <button
-                className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-muted hover:text-warm hover:border-white/30 transition-all"
+                className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center text-muted hover:text-warm transition-all"
                 onClick={() => setSelectedProduct(null)}
               >
                 <i className="fas fa-times text-sm"></i>
@@ -124,148 +136,23 @@ const ProductModal = () => {
             </div>
 
             {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto">
-              {/* Image */}
-              <div className="relative w-full aspect-[4/3] bg-card overflow-hidden">
-                <img
-                  src={activeImg || p.images[0]}
-                  alt={p.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&q=90&w=1000";
-                  }}
-                />
-                {p.discount && (
-                  <span className="absolute top-3 left-3 bg-discount text-white text-[9px] font-black p-[3px_8px] rounded-md tracking-[1px] uppercase">
-                    {p.discount}
-                  </span>
-                )}
-              </div>
-
-              {/* Thumbnail strip */}
-              {p.images.length > 1 && (
-                <div className="flex gap-2 px-4 py-3 overflow-x-auto border-b border-border">
-                  {p.images.map((img, i) => (
-                    <button
-                      key={i}
-                      className={`w-14 h-16 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${activeImg === img ? 'border-accent' : 'border-border opacity-50'}`}
-                      onClick={() => setActiveImg(img)}
-                    >
-                      <img src={img} alt="" className="w-full h-full object-cover" />
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* Price row */}
-              <div className="flex items-center gap-3 px-4 py-4 border-b border-border">
-                <span className="text-2xl font-black text-warm">{p.price}</span>
-                {p.oldPrice && <span className="text-base text-muted line-through">{p.oldPrice}</span>}
-                <span className="ml-auto text-green-400 text-[11px] font-bold border border-green-400/30 px-2 py-0.5 rounded-full bg-green-400/5">In Stock</span>
-              </div>
-
-              {/* Size */}
-              <div className="px-4 py-4 border-b border-border">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="font-bold text-warm text-[12px] tracking-[1px] uppercase">Select Size</span>
-                  <span className="text-accent text-[10px] uppercase font-bold tracking-[1px]">Size Guide</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {p.sizes.map((size: string) => (
-                    <button
-                      key={size}
-                      className={`h-11 px-4 min-w-[50px] rounded-xl border-2 font-bold text-sm transition-all active:scale-90 ${selectedSize === size ? 'bg-accent border-accent text-bg shadow-lg' : 'bg-card border-border text-muted hover:border-accent'}`}
-                      onClick={() => setSelectedSize(size)}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Qty + Add to Cart */}
-              <div className="px-4 py-4 border-b border-border">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="font-bold text-warm text-[12px] tracking-[1px] uppercase">Quantity</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center bg-card border-2 border-border rounded-xl overflow-hidden">
-                    <button className="w-12 h-12 text-warm hover:bg-border transition-colors text-lg font-bold" onClick={() => setQty(q => Math.max(1, q - 1))}>−</button>
-                    <span className="w-10 text-center font-bold text-warm">{qty}</span>
-                    <button className="w-12 h-12 text-warm hover:bg-border transition-colors text-lg font-bold" onClick={() => setQty(q => Math.min(10, q + 1))}>+</button>
-                  </div>
-                  <span className="text-muted text-[11px]">Max 10 per order</span>
-                </div>
-              </div>
-
-              {/* Shipping Info */}
-              <div className="grid grid-cols-3 gap-3 mx-4 my-4 bg-bg2/50 p-4 rounded-2xl border border-border">
-                <div className="text-center">
-                  <i className="fas fa-undo text-accent text-base mb-1.5 block"></i>
-                  <p className="text-[9px] font-bold text-warm uppercase tracking-[0.5px]">7 Days Returns</p>
-                </div>
-                <div className="text-center border-x border-border/50">
-                  <i className="fas fa-truck text-accent text-base mb-1.5 block"></i>
-                  <p className="text-[9px] font-bold text-warm uppercase tracking-[0.5px]">COD Available</p>
-                </div>
-                <div className="text-center">
-                  <i className="fas fa-box-open text-accent text-base mb-1.5 block"></i>
-                  <p className="text-[9px] font-bold text-warm uppercase tracking-[0.5px]">Express Delivery</p>
-                </div>
-              </div>
-
-              {/* Description */}
-              <div className="px-4 pb-4">
-                <h4 className="font-bebas text-xl tracking-[2px] text-warm mb-2">The Story</h4>
-                <p className="text-[13px] text-muted leading-relaxed italic">"{p.desc}"</p>
-              </div>
-
-              {/* Product Info Table */}
-              <div className="px-4 pb-4">
-                <h4 className="font-bebas text-xl tracking-[2px] text-warm mb-3">Product Specifications</h4>
-                <div className="border border-border rounded-xl overflow-hidden text-[12px]">
-                  {p.details.map(([label, val], i, arr) => (
-                    <div key={label} className={`grid grid-cols-2 ${i < arr.length - 1 ? 'border-b border-border' : ''}`}>
-                      <div className="p-3 bg-bg2 font-bold text-muted uppercase">{label}</div>
-                      <div className="p-3 text-warm">{val}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Reviews */}
-              {p.reviewList && p.reviewList.length > 0 && (
-                <div className="px-4 pb-4">
-                  <h4 className="font-bebas text-xl tracking-[2px] text-warm mb-3">Customer Feedback</h4>
-                  <div className="space-y-3">
-                    {p.reviewList.map((rev, i) => (
-                      <div key={i} className="bg-bg2/30 border border-border p-3 rounded-xl">
-                        <div className="flex justify-between mb-1">
-                          <span className="font-bold text-[11px] text-warm">{rev.name}</span>
-                          <div className="flex gap-0.5">
-                            {[...Array(5)].map((_, idx) => (
-                              <i key={idx} className={`fas fa-star text-[8px] ${idx < rev.stars ? 'text-accent' : 'text-muted'}`}></i>
-                            ))}
-                          </div>
-                        </div>
-                        <p className="text-[11px] text-muted leading-tight">{rev.text}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Bottom spacer so content not hidden behind sticky button */}
-              <div className="h-24" />
+            <div className="flex-1 overflow-y-auto pb-32">
+              <MobileDetails p={p} activeImg={activeImg} setActiveImg={setActiveImg} selectedSize={selectedSize} setSelectedSize={setSelectedSize} selectedColor={selectedColor} setSelectedColor={setSelectedColor} qty={qty} setQty={setQty} />
             </div>
 
-            {/* Sticky Add to Cart button at bottom */}
-            <div className="flex-shrink-0 px-4 py-4 border-t border-border bg-bg shadow-[0_-10px_40px_rgba(0,0,0,0.4)]">
+            {/* Sticky Action buttons at bottom */}
+            <div className="fixed bottom-0 left-0 right-0 px-4 py-3 border-t border-border bg-bg shadow-[0_-10px_30px_rgba(0,0,0,0.8)] z-20 flex gap-3">
               <button
-                className="w-full bg-accent text-bg rounded-xl font-black tracking-[2px] uppercase text-[13px] py-4 hover:bg-accent2 transition-all active:scale-[0.98] flex items-center justify-center gap-3 shadow-[0_8px_30px_rgba(196,154,108,0.3)]"
+                className="flex-1 bg-card border border-border text-warm rounded-xl font-bold tracking-[1px] uppercase text-[12px] h-12 hover:bg-border transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                 onClick={handleAddToCart}
               >
-                <i className="fas fa-shopping-bag"></i> Add to Bag — {p.price}
+                <i className="fas fa-shopping-cart"></i> Add to Cart
+              </button>
+              <button
+                className="flex-1 bg-accent text-bg rounded-xl font-bold tracking-[1px] uppercase text-[12px] h-12 hover:bg-accent2 transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-[0_5px_20px_rgba(196,154,108,0.2)]"
+                onClick={handleBuyNow}
+              >
+                <i className="fas fa-bolt"></i> Buy Now
               </button>
             </div>
           </motion.div>
@@ -275,99 +162,352 @@ const ProductModal = () => {
   );
 };
 
-// Reusable details block for desktop
-const ModalDetails = ({
-  p, selectedSize, setSelectedSize, qty, setQty, handleAddToCart, onClose
-}: {
-  p: Product;
-  selectedSize: string;
-  setSelectedSize: (s: string) => void;
-  qty: number;
-  setQty: (q: any) => void;
-  handleAddToCart: () => void;
-  onClose: () => void;
-}) => (
-  <div>
-    <div className="flex justify-between items-start mb-4">
-      <div>
-        <p className="text-accent text-[11px] tracking-[4px] uppercase font-bold mb-1">{p.category}</p>
-        <h2 className="font-bebas text-4xl tracking-[2px] text-warm">{p.name}</h2>
-      </div>
-      <button className="text-muted hover:text-warm text-xl" onClick={onClose}>
-        <i className="fas fa-times"></i>
-      </button>
-    </div>
+const DesktopDetails = ({ p, selectedSize, setSelectedSize, selectedColor, setSelectedColor, qty, setQty, handleAddToCart, handleBuyNow }: any) => {
+  const discountPercent = p.oldPriceNum ? Math.round(((p.oldPriceNum - p.priceNum) / p.oldPriceNum) * 100) : 0;
 
-    <div className="flex items-center gap-4 mb-6">
-      <span className="text-3xl font-black text-warm">{p.price}</span>
-      {p.oldPrice && <span className="text-xl text-muted line-through">{p.oldPrice}</span>}
-      <span className="text-green-400 text-[12px] font-bold border border-green-400/30 px-2 py-0.5 rounded-full bg-green-400/5">In Stock</span>
-    </div>
+  return (
+    <div className="max-w-3xl">
+      {/* Breadcrumb */}
+      <div className="text-[11px] text-muted font-bold tracking-[2px] uppercase mb-3 flex items-center gap-2">
+        <span className="hover:text-warm cursor-pointer">Home</span>
+        <i className="fas fa-chevron-right text-[8px]"></i>
+        <span className="hover:text-warm cursor-pointer">{p.category}</span>
+        <i className="fas fa-chevron-right text-[8px]"></i>
+        <span className="text-accent truncate">{p.name}</span>
+      </div>
 
-    <hr className="border-border opacity-30 mb-8" />
-
-    <div className="mb-8">
-      <div className="flex justify-between items-center mb-4">
-        <span className="font-bold text-warm text-[13px] tracking-[1px] uppercase">Select Size</span>
-        <span className="text-accent text-[11px] underline cursor-pointer uppercase font-bold tracking-[1px]">Size Guide</span>
-      </div>
-      <div className="grid grid-cols-5 gap-3">
-        {p.sizes.map((size: string) => (
-          <button
-            key={size}
-            className={`h-12 rounded-xl border-2 font-bold transition-all ${selectedSize === size ? 'bg-accent border-accent text-bg shadow-lg scale-105' : 'bg-card border-border text-muted hover:border-accent'}`}
-            onClick={() => setSelectedSize(size)}
-          >
-            {size}
-          </button>
-        ))}
-      </div>
-    </div>
-
-    <div className="flex gap-4 mb-10">
-      <div className="flex items-center bg-card border-2 border-border rounded-xl overflow-hidden">
-        <button className="w-12 h-14 text-warm hover:bg-border transition-colors" onClick={() => setQty((q: number) => Math.max(1, q - 1))}>−</button>
-        <span className="w-8 text-center font-bold text-warm">{qty}</span>
-        <button className="w-12 h-14 text-warm hover:bg-border transition-colors" onClick={() => setQty((q: number) => Math.min(10, q + 1))}>+</button>
-      </div>
-      <button
-        className="flex-1 bg-accent text-bg rounded-xl font-bold tracking-[2px] uppercase text-sm hover:bg-accent2 hover:translate-y-[-2px] transition-all flex items-center justify-center gap-3 shadow-xl"
-        onClick={handleAddToCart}
-      >
-        <i className="fas fa-shopping-bag"></i> Add To Bag
-      </button>
-    </div>
-
-    <div className="grid grid-cols-3 gap-6 mb-10 bg-bg2/50 p-6 rounded-2xl border border-border">
-      <div className="text-center">
-        <i className="fas fa-undo text-accent text-xl mb-3 block"></i>
-        <p className="text-[10px] font-bold text-warm uppercase tracking-[1px]">7 Days Returns</p>
-      </div>
-      <div className="text-center border-x border-border/50">
-        <i className="fas fa-truck text-accent text-xl mb-3 block"></i>
-        <p className="text-[10px] font-bold text-warm uppercase tracking-[1px]">Cash On Delivery</p>
-      </div>
-      <div className="text-center">
-        <i className="fas fa-box-open text-accent text-xl mb-3 block"></i>
-        <p className="text-[10px] font-bold text-warm uppercase tracking-[1px]">Express Delivery</p>
-      </div>
-    </div>
-
-    <div className="mb-10">
-      <h4 className="font-bebas text-2xl tracking-[2px] text-warm mb-4">The Story</h4>
-      <p className="text-muted italic leading-relaxed mb-6">"{p.desc}"</p>
+      {/* Title */}
+      <h1 className="text-3xl font-bold text-warm leading-tight mb-2 font-bebas tracking-[1px]">{p.name}</h1>
       
-      <h4 className="font-bebas text-2xl tracking-[2px] text-warm mb-4">Product Information</h4>
-      <div className="border border-border rounded-xl overflow-hidden">
-        {p.details.map(([label, val], i, arr) => (
-          <div key={label} className={`grid grid-cols-2 ${i < arr.length - 1 ? 'border-b border-border' : ''}`}>
-            <div className="p-4 bg-bg2 text-[12px] font-bold text-muted uppercase">{label}</div>
-            <div className="p-4 text-[12px] text-warm">{val}</div>
+      {/* Rating */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="flex gap-1">
+          {[...Array(5)].map((_, i) => (
+             <i key={i} className={`fas fa-star text-[13px] ${i < Math.floor(p.rating) ? 'text-[#f5c518]' : 'text-border'}`}></i>
+          ))}
+        </div>
+        <span className="text-accent text-[13px] hover:underline cursor-pointer">{p.rating} out of 5</span>
+        <span className="text-muted text-[13px] border-l border-border pl-3 hover:text-accent cursor-pointer">{p.reviews} ratings</span>
+      </div>
+
+      <hr className="border-border/60 my-4" />
+
+      {/* Price Block */}
+      <div className="mb-6">
+        {discountPercent > 0 && (
+          <div className="flex items-center gap-2 mb-2">
+            <span className="bg-[#cc0c39] text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider">Deal of the Day</span>
+          </div>
+        )}
+        <div className="flex items-baseline gap-4 mb-1">
+          {discountPercent > 0 && <span className="text-3xl font-light text-[#cc0c39]">-{discountPercent}%</span>}
+          <span className="text-4xl font-bold text-warm">{p.price}</span>
+        </div>
+        {p.oldPrice && (
+          <div className="text-muted text-[13px]">
+            M.R.P.: <span className="line-through">{p.oldPrice}</span>
+          </div>
+        )}
+        <div className="text-muted text-[12px] mt-1">Inclusive of all taxes</div>
+      </div>
+
+      <hr className="border-border/60 my-5" />
+
+      {/* Service Icons */}
+      <div className="flex justify-between gap-2 mb-6 text-center max-w-lg">
+        {[
+          { icon: 'fa-undo', text: '7 Days Replacement' },
+          { icon: 'fa-truck', text: 'Free Delivery' },
+          { icon: 'fa-money-bill-wave', text: 'Pay on Delivery' },
+          { icon: 'fa-shield-alt', text: 'Secure Transaction' },
+          { icon: 'fa-medal', text: 'Top Brand' }
+        ].map((item, i) => (
+          <div key={i} className="flex flex-col items-center w-20">
+             <div className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center mb-2">
+               <i className={`fas ${item.icon} text-accent text-sm`}></i>
+             </div>
+             <span className="text-accent text-[10px] leading-tight hover:underline cursor-pointer">{item.text}</span>
           </div>
         ))}
       </div>
+
+      <hr className="border-border/60 my-5" />
+
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex-1">
+          {/* Selections */}
+          <div className="space-y-5 mb-8">
+            {/* Colors */}
+            {p.colors && p.colors.length > 0 && (
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-warm font-bold text-[13px]">Color: <span className="text-muted font-normal">{selectedColor || p.colors[0]}</span></span>
+                </div>
+                <div className="flex gap-3">
+                  {p.colors.map((color: string, i: number) => (
+                    <button
+                      key={i}
+                      className={`w-10 h-10 rounded-full border-[3px] transition-all ${selectedColor === color ? 'border-accent scale-110 shadow-[0_0_10px_rgba(196,154,108,0.5)]' : 'border-card hover:border-border'}`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => setSelectedColor(color)}
+                      title={color}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sizes */}
+            {p.sizes && p.sizes.length > 0 && (
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-warm font-bold text-[13px]">Size: <span className="text-muted font-normal">{selectedSize}</span></span>
+                  <span className="text-accent text-[11px] hover:underline cursor-pointer"><i className="fas fa-ruler mr-1"></i>Size Chart</span>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {p.sizes.map((size: string) => (
+                    <button
+                      key={size}
+                      className={`min-w-[3rem] h-10 px-3 rounded-lg border flex items-center justify-center font-bold text-[13px] transition-all ${selectedSize === size ? 'bg-accent/10 border-accent text-accent shadow-sm' : 'bg-card border-border text-warm hover:border-muted hover:bg-border/30'}`}
+                      onClick={() => setSelectedSize(size)}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Quantity */}
+            <div>
+              <span className="text-warm font-bold text-[13px] block mb-2">Quantity:</span>
+              <div className="inline-flex items-center bg-card border border-border rounded-lg overflow-hidden shadow-sm">
+                <button className="w-10 h-10 text-warm hover:bg-border transition-colors flex items-center justify-center" onClick={() => setQty((q: number) => Math.max(1, q - 1))}><i className="fas fa-minus text-[10px]"></i></button>
+                <span className="w-12 text-center font-bold text-warm text-[14px] bg-bg">{qty}</span>
+                <button className="w-10 h-10 text-warm hover:bg-border transition-colors flex items-center justify-center" onClick={() => setQty((q: number) => Math.min(10, q + 1))}><i className="fas fa-plus text-[10px]"></i></button>
+              </div>
+            </div>
+          </div>
+
+          {/* Product Details Section */}
+          <div className="mb-6">
+            <h3 className="font-bold text-warm text-lg mb-3 border-b border-border pb-2">Product Details</h3>
+            <div className="grid grid-cols-1 gap-2 text-[13px]">
+              {p.details.map(([label, val]: any, i: number) => (
+                <div key={i} className="flex pb-1">
+                  <span className="w-1/3 text-muted font-bold">{label}</span>
+                  <span className="w-2/3 text-warm">{val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* About this item */}
+          <div>
+            <h3 className="font-bold text-warm text-lg mb-2 border-b border-border pb-2">About this item</h3>
+            <ul className="list-disc pl-5 text-warm text-[13px] space-y-2 leading-relaxed">
+              <li>{p.desc}</li>
+              <li>Designed for the modern lifestyle with premium materials and exquisite craftsmanship.</li>
+              <li>Care Instructions: Machine wash cold with like colors, tumble dry low.</li>
+              <li>Fit Type: {p.details.find((d: any) => d[0] === 'Fit')?.[1] || 'Regular'}</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Buttons (Amazon style sticky-like sidebar container on large screens) */}
+        <div className="w-[280px] flex-shrink-0">
+          <div className="border border-border/60 rounded-xl p-5 bg-card/50 shadow-sm sticky top-0">
+            <div className="text-2xl font-bold text-warm mb-3">{p.price}</div>
+            <div className="text-[#007600] text-[13px] font-bold mb-4">In stock</div>
+            
+            <div className="flex flex-col gap-3 mb-4">
+              <button
+                className="w-full bg-[#ffd814] text-black rounded-full font-bold text-[14px] py-3.5 hover:bg-[#f7ca00] transition-colors shadow-sm flex items-center justify-center gap-2"
+                onClick={handleAddToCart}
+              >
+                Add to Cart
+              </button>
+              <button
+                className="w-full bg-[#ffa41c] text-black rounded-full font-bold text-[14px] py-3.5 hover:bg-[#fa8900] transition-colors shadow-sm flex items-center justify-center gap-2"
+                onClick={handleBuyNow}
+              >
+                Buy Now
+              </button>
+            </div>
+            
+            <div className="text-[12px] flex items-center gap-2 text-muted mb-2">
+              <i className="fas fa-lock text-accent"></i> Secure transaction
+            </div>
+            <div className="text-[12px] flex justify-between mb-1">
+              <span className="text-muted">Ships from</span>
+              <span className="text-warm">VORTEX</span>
+            </div>
+            <div className="text-[12px] flex justify-between">
+              <span className="text-muted">Sold by</span>
+              <span className="text-warm">VORTEX</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
+
+const MobileDetails = ({ p, activeImg, setActiveImg, selectedSize, setSelectedSize, selectedColor, setSelectedColor, qty, setQty }: any) => {
+  const discountPercent = p.oldPriceNum ? Math.round(((p.oldPriceNum - p.priceNum) / p.oldPriceNum) * 100) : 0;
+
+  return (
+    <div>
+      {/* Image Gallery */}
+      <div className="relative w-full aspect-[4/5] bg-card overflow-hidden">
+        <img
+          src={activeImg || p.images[0]}
+          alt={p.name}
+          className="w-full h-full object-cover"
+        />
+        {discountPercent > 0 && (
+          <div className="absolute top-3 left-3 bg-[#cc0c39] text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider shadow-md">
+            -{discountPercent}% OFF
+          </div>
+        )}
+      </div>
+
+      {/* Thumbnail strip */}
+      {p.images.length > 1 && (
+        <div className="flex gap-2 p-3 overflow-x-auto border-b border-border hide-scrollbar bg-card">
+          {p.images.map((img: string, i: number) => (
+            <button
+              key={i}
+              className={`w-14 aspect-[3/4] rounded-md overflow-hidden border-2 transition-all flex-shrink-0 ${activeImg === img ? 'border-accent shadow-sm' : 'border-border/50 opacity-70'}`}
+              onClick={() => setActiveImg(img)}
+            >
+              <img src={img} alt="" className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="p-4">
+        {/* Title & Rating */}
+        <div className="flex justify-between items-start gap-2 mb-2">
+          <span className="text-accent text-[11px] tracking-[2px] uppercase font-bold">Brand</span>
+        </div>
+        <h2 className="text-xl font-bold text-warm leading-tight mb-2">{p.name}</h2>
+        
+        <div className="flex items-center gap-2 mb-4">
+          <div className="flex gap-0.5">
+            {[...Array(5)].map((_, i) => (
+              <i key={i} className={`fas fa-star text-[11px] ${i < Math.floor(p.rating) ? 'text-[#f5c518]' : 'text-border'}`}></i>
+            ))}
+          </div>
+          <span className="text-accent text-[12px]">{p.rating}</span>
+          <span className="text-muted text-[12px]">({p.reviews})</span>
+        </div>
+
+        {/* Price Block */}
+        <div className="mb-5 bg-card/30 p-3 rounded-lg border border-border/50">
+          <div className="flex items-baseline gap-3 mb-1">
+            {discountPercent > 0 && <span className="text-2xl font-light text-[#cc0c39]">-{discountPercent}%</span>}
+            <span className="text-3xl font-bold text-warm">{p.price}</span>
+          </div>
+          {p.oldPrice && (
+            <div className="text-muted text-[12px]">
+              M.R.P.: <span className="line-through">{p.oldPrice}</span>
+            </div>
+          )}
+          <div className="text-muted text-[11px] mt-1">Inclusive of all taxes</div>
+        </div>
+
+        {/* Service Icons */}
+        <div className="flex justify-between gap-1 mb-6 text-center border-y border-border/50 py-4">
+          {[
+            { icon: 'fa-undo', text: '7 Days Return' },
+            { icon: 'fa-truck', text: 'Free Delivery' },
+            { icon: 'fa-money-bill-wave', text: 'Pay on Delivery' },
+            { icon: 'fa-shield-alt', text: 'Secure' }
+          ].map((item, i) => (
+            <div key={i} className="flex flex-col items-center flex-1">
+               <div className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center mb-1.5">
+                 <i className={`fas ${item.icon} text-accent text-[11px]`}></i>
+               </div>
+               <span className="text-accent text-[9px] leading-tight">{item.text}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Options */}
+        <div className="space-y-5 mb-6">
+          {/* Colors */}
+          {p.colors && p.colors.length > 0 && (
+            <div>
+              <span className="text-warm font-bold text-[12px] block mb-2">Color: <span className="text-muted font-normal">{selectedColor || p.colors[0]}</span></span>
+              <div className="flex gap-2">
+                {p.colors.map((color: string, i: number) => (
+                  <button
+                    key={i}
+                    className={`w-8 h-8 rounded-full border-[2px] ${selectedColor === color ? 'border-accent' : 'border-card'}`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setSelectedColor(color)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Sizes */}
+          {p.sizes && p.sizes.length > 0 && (
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                 <span className="text-warm font-bold text-[12px]">Size: <span className="text-muted font-normal">{selectedSize}</span></span>
+                 <span className="text-accent text-[10px]">Size Chart</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {p.sizes.map((size: string) => (
+                  <button
+                    key={size}
+                    className={`h-9 px-3 rounded-md border text-[12px] font-bold ${selectedSize === size ? 'bg-accent/10 border-accent text-accent' : 'bg-card border-border text-warm'}`}
+                    onClick={() => setSelectedSize(size)}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Quantity */}
+          <div className="flex items-center gap-4">
+             <span className="text-warm font-bold text-[12px]">Qty:</span>
+             <div className="flex items-center bg-card border border-border rounded-md h-9">
+               <button className="w-9 h-full flex items-center justify-center text-warm" onClick={() => setQty((q: number) => Math.max(1, q - 1))}><i className="fas fa-minus text-[10px]"></i></button>
+               <span className="w-8 text-center font-bold text-[13px]">{qty}</span>
+               <button className="w-9 h-full flex items-center justify-center text-warm" onClick={() => setQty((q: number) => Math.min(10, q + 1))}><i className="fas fa-plus text-[10px]"></i></button>
+             </div>
+          </div>
+        </div>
+
+        {/* Details */}
+        <div className="mb-4">
+          <h3 className="font-bold text-warm text-[14px] mb-2 border-b border-border pb-1">Product Details</h3>
+          <div className="overflow-hidden text-[12px]">
+            {p.details.map(([label, val]: any, i: number) => (
+              <div key={i} className="flex border-b border-border/50 last:border-0 py-1.5">
+                <span className="w-2/5 text-muted font-bold">{label}</span>
+                <span className="w-3/5 text-warm">{val}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Description */}
+        <div>
+          <h3 className="font-bold text-warm text-[14px] mb-2 border-b border-border pb-1">About this item</h3>
+          <p className="text-warm text-[12px] leading-relaxed mt-2">{p.desc}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default ProductModal;
+

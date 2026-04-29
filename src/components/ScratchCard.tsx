@@ -57,7 +57,7 @@ const ScratchCard = () => {
         
         if (count > (width * height) * 0.5) { // 50% scratched
           setScratched(true);
-          showToast("Coupon Revealed: PUFFIN25");
+          showToast("Coupon Revealed: VORTEX25");
         }
       };
 
@@ -121,13 +121,13 @@ const ScratchCard = () => {
              <div className="text-4xl font-black text-accent mb-2">25% OFF</div>
              <div className="text-[10px] text-muted tracking-[2px] uppercase mb-4">On your first order</div>
              <div className="p-3 bg-accent/10 border border-dashed border-accent rounded-lg font-mono text-accent text-sm select-all">
-                PUFFIN25
+                VORTEX25
              </div>
              {scratched && (
                <button 
                 className="mt-4 text-[11px] text-accent font-bold underline cursor-pointer"
                 onClick={() => {
-                  navigator.clipboard.writeText("PUFFIN25");
+                  navigator.clipboard.writeText("VORTEX25");
                   showToast("Code Copied!");
                 }}
                >

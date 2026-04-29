@@ -8,7 +8,7 @@ import { useStore } from '@/context/StoreProvider';
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { cart, setIsCartOpen, setIsSearchOpen, wishlist, showToast } = useStore();
+  const { cart, setIsCartOpen, setIsSearchOpen, wishlist, showToast, user } = useStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,12 +28,12 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-500 ${(isScrolled || isMenuOpen) ? 'bg-[#f5f0e8] py-4 border-b border-black/5' : 'bg-transparent py-8'}`}>
+    <nav className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-500 ${(isScrolled || isMenuOpen) ? 'bg-[#ffffff] py-4 border-b border-black/5' : 'bg-transparent py-8'}`}>
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="relative z-[1100] group flex items-center gap-4">
-          <img src="/puffn-logo.svg" alt="" className="w-9 h-9 brightness-0" />
-          <span className="font-bebas text-2xl md:text-3xl tracking-[3px] text-accent2 group-hover:text-warm transition-colors uppercase">PUFFNCLUB</span>
+          <img src="/kite-logo.png" alt="" className="w-9 h-9 brightness-0" />
+          <span className="font-bebas text-2xl md:text-3xl tracking-[3px] text-accent2 group-hover:text-warm transition-colors uppercase">VORTEX</span>
         </Link>
 
 
@@ -60,6 +60,15 @@ const Navbar = () => {
           >
             <i className="fas fa-search"></i>
           </button>
+
+          <Link
+            href={user ? "/profile" : "/auth"}
+            className="text-warm text-xl hover:text-accent transition-colors p-2 hidden sm:block"
+            suppressHydrationWarning
+          >
+            <i className={user ? "fas fa-user-check" : "far fa-user"}></i>
+            {user && <span className="ml-2 text-[10px] font-bold tracking-widest hidden lg:inline">{user.username}</span>}
+          </Link>
 
           <button
             onClick={() => showToast("Wishlist coming soon!")}
@@ -114,7 +123,7 @@ const Navbar = () => {
           ))}
 
           <div className={`mt-12 flex gap-10 items-center ${isMenuOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000 delay-800`}>
-            <a href="https://www.instagram.com/puffnclub_official?igsh=MTZmdDZybzJxaWRpaQ==" target="_blank" rel="noopener noreferrer" className="text-muted text-2xl hover:text-accent"><i className="fab fa-instagram"></i></a>
+            <a href="https://www.instagram.com/vortex_official?igsh=MTZmdDZybzJxaWRpaQ==" target="_blank" rel="noopener noreferrer" className="text-muted text-2xl hover:text-accent"><i className="fab fa-instagram"></i></a>
             <a href="#" className="text-muted text-2xl hover:text-accent"><i className="fab fa-twitter"></i></a>
             <a href="#" className="text-muted text-2xl hover:text-accent"><i className="fab fa-facebook"></i></a>
           </div>

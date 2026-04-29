@@ -1,268 +1,429 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { products, Product } from '@/lib/data';
-import { useStore } from '@/context/StoreProvider';
+import React, { useState, useMemo, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { products } from "@/lib/data";
 
 const CollectionPage = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { setSelectedProduct, showToast } = useStore();
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  // States for filters
-  const [categoryFilter, setCategoryFilter] = useState("All");
-  const [availability, setAvailability] = useState<string[]>([]);
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([200, 1999]);
-  const [showFiltersMobile, setShowFiltersMobile] = useState(false);
+  const [dynamicProducts, setDynamicProducts] = useState<any[]>([]);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
+  React.useEffect(() => {
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(data => setDynamicProducts(data))
+      .catch(err => console.error("Failed to fetch dynamic products:", err));
+  }, []);
+
+  const categories = useMemo(() => {
+    const allProducts = [...products, ...dynamicProducts];
+    
+    const getCount = (keys: string[]) => {
+      return allProducts.filter(p => keys.includes(p.category)).length;
+    };
+
+    const getCategoryImages = (keys: string[], defaultImg: string) => {
+      const prods = allProducts.filter(p => keys.includes(p.category));
+      const imgs = prods.flatMap(p => p.images);
+      return imgs.length > 0 ? imgs : [defaultImg];
+    };
+
+    return [
+      {
+        title: "T-Shirts",
+        subtitle: "Everyday Essentials",
+        images: getCategoryImages(["Oversized Fit", "Regular Fit", "Slim Fit", "Vintage Fit"], "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=1000"),
+        href: "/collection/tshirts",
+        count: getCount(["Oversized Fit", "Regular Fit", "Slim Fit", "Vintage Fit"]),
+        featured: true
       },
-      { threshold: 0.1 }
-    );
+      {
+        title: "Printed",
+        subtitle: "Wearable Art",
+        images: getCategoryImages(["Graphic Fit"], "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&q=80&w=1000"),
+        href: "/collection/printed-tshirts",
+        count: getCount(["Graphic Fit"]),
+        featured: false
+      },
+      {
+        title: "Shirts",
+        subtitle: "Smart Casuals",
+        images: getCategoryImages(["Shirts"], "https://images.unsplash.com/photo-1596755094514-f87034a26cc1?auto=format&fit=crop&q=80&w=1000"),
+        href: "/collection/shirts",
+        count: getCount(["Shirts"]),
+        featured: false
+      },
+      {
+        title: "Jackets",
+        subtitle: "Outer Layer",
+        images: getCategoryImages(["Jackets"], "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=1000"),
+        href: "/collection/jackets",
+        count: getCount(["Jackets"]),
+        featured: false
+      },
+      {
+        title: "Hoodies",
+        subtitle: "Stay Cozy",
+        images: getCategoryImages(["Hoodies"], "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&q=80&w=1000"),
+        href: "/collection/hoodies",
+        count: getCount(["Hoodies"]),
+        featured: true
+      }
+    ];
+  }, [dynamicProducts]);
 
-    const elements = containerRef.current?.querySelectorAll('.reveal');
-    elements?.forEach(el => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, [categoryFilter, availability, selectedSizes, priceRange]);
-
-  const categories = ["All", "Oversized Fit", "Regular Fit", "Street Fit", "Vintage Fit", "Slim Fit", "Graphic Fit"];
-  const sizes = ["Extra Small", "Small", "Medium", "Large", "Extra Large", "Double XL"];
-  const sizeMap: Record<string, string> = {
-    "Extra Small": "XS",
-    "Small": "S",
-    "Medium": "M",
-    "Large": "L",
-    "Extra Large": "XL",
-    "Double XL": "XXL"
+  const letterVariants = {
+    hidden: { y: 80, opacity: 0, rotateX: -90 },
+    visible: (i: number) => ({
+      y: 0,
+      opacity: 1,
+      rotateX: 0,
+      transition: {
+        duration: 0.8,
+        delay: i * 0.04,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    })
   };
 
-  const toggleSize = (size: string) => {
-    setSelectedSizes(prev =>
-      prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
-    );
-  };
-
-  const toggleAvailability = (status: string) => {
-    setAvailability(prev =>
-      prev.includes(status) ? prev.filter(s => s !== status) : [...prev, status]
-    );
-  };
-
-  const filteredProducts = products.filter(p => {
-    // Category Filter
-    if (categoryFilter !== "All" && p.category !== categoryFilter) return false;
-
-    // Price Filter
-    if (p.priceNum < priceRange[0] || p.priceNum > priceRange[1]) return false;
-
-    // Size Filter (If any selected)
-    if (selectedSizes.length > 0) {
-      const mappedSelected = selectedSizes.map(s => sizeMap[s]);
-      if (!p.sizes.some(size => mappedSelected.includes(size))) return false;
-    }
-
-    // Availability Filter
-    if (availability.length > 0) {
-      // Mocking availability: IDs divisible by 5 are "Out of Stock" for demo
-      const isOut = p.id % 5 === 0;
-      if (availability.includes("In Stock") && isOut) return false;
-      if (availability.includes("Out of Stock") && !isOut) return false;
-    }
-
-    return true;
-  });
+  const titleText = "COLLECTIONS";
+  const subtitleText = "Curated categories for every occasion";
 
   return (
-    <main className="pt-[100px] md:pt-[140px] pb-[100px] min-h-screen bg-bg" ref={containerRef}>
-      <div className="px-5 md:px-10 max-w-[1400px] mx-auto">
-        <div className="mb-10 reveal">
-          <p className="text-accent text-[11px] tracking-[5px] uppercase mb-3">Our Entire Flock</p>
-          <h1 className="font-bebas text-[clamp(40px,8vw,80px)] tracking-[4px] text-warm leading-none">The Full Collection<span className="text-accent">.</span></h1>
+    <main className="min-h-screen bg-[#f5f0e8] text-[#1a1714] overflow-hidden">
+
+      {/* ===== HERO SECTION ===== */}
+      <section className="relative h-[70vh] min-h-[500px] flex items-end pb-16 md:pb-24 overflow-hidden">
+        {/* Background Grain */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-10">
+          <svg width="100%" height="100%">
+            <filter id="grain"><feTurbulence baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" /></filter>
+            <rect width="100%" height="100%" filter="url(#grain)" />
+          </svg>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-10">
-          {/* Sidebar Filter */}
-          <aside className={`lg:w-[280px] flex-shrink-0 space-y-8 ${showFiltersMobile ? 'block' : 'hidden lg:block'}`}>
-            {/* Availability */}
-            <div className="reveal">
-              <h4 className="font-bold text-warm mb-4 tracking-wide">Availability</h4>
-              <div className="space-y-3">
-                {["In Stock", "Out of Stock"].map(status => (
-                  <label key={status} className="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      className={`w-5 h-5 border rounded flex items-center justify-center transition-colors ${availability.includes(status) ? 'bg-accent border-accent' : 'border-border group-hover:border-accent'}`}
-                      onClick={() => toggleAvailability(status)}
-                    >
-                      {availability.includes(status) && <i className="fas fa-check text-[10px] text-bg"></i>}
-                    </div>
-                    <span className="text-[13px] text-text/80 group-hover:text-warm transition-colors">{status}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+        {/* Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#f5f0e8] via-transparent to-[#f5f0e8]/60 z-[2]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#f5f0e8]/80 via-transparent to-transparent z-[2]" />
 
-            <hr className="border-border opacity-30" />
+        {/* Faint Grid Lines */}
+        <div className="absolute inset-0 z-[1] opacity-[0.08]">
+          <div className="absolute top-0 bottom-0 left-1/4 w-px bg-black" />
+          <div className="absolute top-0 bottom-0 left-2/4 w-px bg-black" />
+          <div className="absolute top-0 bottom-0 left-3/4 w-px bg-black" />
+          <div className="absolute left-0 right-0 top-1/3 h-px bg-black" />
+          <div className="absolute left-0 right-0 top-2/3 h-px bg-black" />
+        </div>
 
-            {/* Size */}
-            <div className="reveal">
-              <h4 className="font-bold text-warm mb-4 tracking-wide">Size</h4>
-              <div className="space-y-3">
-                {sizes.map(size => (
-                  <label key={size} className="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      className={`w-5 h-5 border rounded flex items-center justify-center transition-colors ${selectedSizes.includes(size) ? 'bg-accent border-accent' : 'border-border group-hover:border-accent'}`}
-                      onClick={() => toggleSize(size)}
-                    >
-                      {selectedSizes.includes(size) && <i className="fas fa-check text-[10px] text-bg"></i>}
-                    </div>
-                    <span className="text-[13px] text-text/80 group-hover:text-warm transition-colors">{size}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+        {/* Hero Content */}
+        <div className="relative z-10 px-6 md:px-16 w-full">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            className="mb-4"
+          >
+            <motion.span
+              variants={{
+                hidden: { width: 0 },
+                visible: { width: 60, transition: { duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] } }
+              }}
+              className="block h-[2px] bg-[#c49a6c]"
+            />
+          </motion.div>
 
-            <hr className="border-border opacity-30" />
-
-            {/* Colour */}
-            <div className="reveal">
-              <h4 className="font-bold text-warm mb-4 tracking-wide">Colour</h4>
-              <div className="flex flex-wrap gap-3">
-                {["#7A1C1C", "#1C3D7A", "#1C7A4D", "#7A7A1C", "#1A1A1A", "#EDE8E0"].map(color => (
-                  <div
-                    key={color}
-                    className="w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-accent transition-all hover:scale-110"
-                    style={{ backgroundColor: color }}
-                  ></div>
-                ))}
-              </div>
-            </div>
-
-            <hr className="border-border opacity-30" />
-
-            {/* Price */}
-            <div className="reveal">
-              <h4 className="font-bold text-warm mb-4 tracking-wide">Price</h4>
-              <div className="flex justify-between text-[12px] text-muted mb-4">
-                <span>Min ₹200</span>
-                <span>Max ₹1999</span>
-              </div>
-              <input
-                type="range"
-                min="200"
-                max="1999"
-                value={priceRange[1]}
-                onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                className="w-full accent-accent h-1 bg-border rounded-lg appearance-none cursor-pointer mb-4"
-              />
-              <div className="font-bold text-warm text-lg">
-                ₹ {priceRange[0]} - ₹ {priceRange[1]}
-              </div>
-
-              <button
-                className="w-full mt-6 py-3 bg-card border border-border text-warm font-bold text-[13px] tracking-[1px] rounded-lg hover:bg-accent hover:text-bg transition-all"
-                onClick={() => {
-                  // In a real app this would trigger the filter, here we already state-manage
-                  showToast("Filters Applied");
-                }}
-              >
-                Apply
-              </button>
-            </div>
-          </aside>
-
-          {/* Main Content */}
-          <div className="flex-1">
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap gap-2 mb-10 reveal">
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  className={`p-[8px_20px] rounded-full font-space text-[12px] font-bold tracking-[1px] transition-all duration-300 border ${categoryFilter === cat ? 'bg-accent text-bg border-accent' : 'bg-transparent text-muted border-border hover:border-accent hover:text-accent'}`}
-                  onClick={() => setCategoryFilter(cat)}
+          <div className="overflow-hidden" style={{ perspective: "600px" }}>
+            <h1 className="font-bebas text-[clamp(50px,12vw,160px)] leading-[0.85] tracking-[2px]">
+              {titleText.split("").map((letter, i) => (
+                <motion.span
+                  key={i}
+                  custom={i}
+                  variants={letterVariants}
+                  className="inline-block"
+                  style={{ transformOrigin: "bottom" }}
                 >
-                  {cat}
-                </button>
+                  {letter === " " ? "\u00A0" : letter}
+                </motion.span>
               ))}
-            </div>
+            </h1>
+          </div>
 
-            {/* Products Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-10">
-              {filteredProducts.map((p, i) => (
-                <div
-                  key={p.id}
-                  className="reveal group cursor-pointer"
-                  onClick={() => setSelectedProduct(p)}
-                  style={{ transitionDelay: `${i * 0.05}s` }}
-                >
-                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-border mb-4 bg-card">
-                    <img
-                      src={p.images[0]}
-                      alt={p.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&q=90&w=1000";
-                      }}
-                    />
+          <motion.p
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.9 }}
+            className="text-[#6b6b6b] text-sm md:text-base tracking-[3px] uppercase mt-6 font-sans"
+          >
+            {subtitleText}
+          </motion.p>
 
-                    {p.id % 5 === 0 && (
-                      <span className="absolute top-3 right-3 bg-bg/80 backdrop-blur-md text-muted p-[4px_10px] rounded-md text-[9px] font-bold tracking-[1px] uppercase">
-                        Out of Stock
-                      </span>
-                    )}
+          {/* Scroll Indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.4 }}
+            className="absolute bottom-8 right-6 md:right-16 flex flex-col items-center gap-3"
+          >
+            <span className="text-[9px] tracking-[4px] uppercase text-[#4a4a4a] rotate-90 origin-center translate-y-6">Scroll</span>
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              className="w-px h-12 bg-gradient-to-b from-[#c49a6c] to-transparent"
+            />
+          </motion.div>
+        </div>
+      </section>
 
-                    {p.discount && (
-                      <span className="absolute top-3 left-3 bg-discount text-white p-[4px_10px] rounded-md text-[10px] font-bold tracking-[1px]">
-                        {p.discount}
-                      </span>
-                    )}
+      {/* ===== CATEGORY COUNT BAR ===== */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="border-t border-b border-black/[0.06] py-5 px-6 md:px-16"
+      >
+        <div className="flex items-center justify-between max-w-[1400px] mx-auto">
+          <span className="text-[10px] tracking-[4px] uppercase text-[#7a7168]">
+            {categories.length} Categories
+          </span>
+          <span className="text-[10px] tracking-[4px] uppercase text-[#7a7168]">
+            {categories.reduce((a, c) => a + c.count, 0)} Products
+          </span>
+        </div>
+      </motion.section>
 
-                    <div className="absolute inset-0 bg-black/10 opacity-0 transition-opacity duration-300 hidden md:flex items-center justify-center group-hover:opacity-100">
-                      <span className="bg-warm text-bg p-[12px_28px] rounded-xl text-[12px] font-bold tracking-[2px] uppercase translate-y-5 transition-transform duration-300 group-hover:translate-y-0">Quick View</span>
-                    </div>
-                  </div>
+      {/* ===== BENTO GRID ===== */}
+      <section className="px-6 md:px-16 py-16 md:py-28">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5 auto-rows-[280px] md:auto-rows-[340px]">
 
-                  <div className="px-1">
-                    <p className="text-[10px] tracking-[2px] uppercase text-accent2 mb-1.5 font-bold">{p.category}</p>
-                    <h3 className="font-bebas text-xl tracking-[1.5px] text-warm mb-2 group-hover:text-accent transition-colors">{p.name}</h3>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-lg">{p.price}</span>
-                      {p.oldPrice && <span className="text-muted line-through text-xs">{p.oldPrice}</span>}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {/* Card 1 — Featured (spans 7 cols, 2 rows) */}
+            <BentoCard
+              category={categories[0]}
+              index={0}
+              hoveredIndex={hoveredIndex}
+              setHoveredIndex={setHoveredIndex}
+              className="md:col-span-7 md:row-span-2"
+            />
 
-            {filteredProducts.length === 0 && (
-              <div className="py-[100px] text-center">
-                <i className="fas fa-search text-5xl text-muted mb-4 opacity-20"></i>
-                <p className="text-muted">No products match your filters.</p>
-                <button
-                  className="mt-4 text-accent underline text-sm"
-                  onClick={() => {
-                    setCategoryFilter("All");
-                    setAvailability([]);
-                    setSelectedSizes([]);
-                    setPriceRange([200, 1999]);
-                  }}
-                >
-                  Clear All Filters
-                </button>
-              </div>
-            )}
+            {/* Card 2 — Small (spans 5 cols) */}
+            <BentoCard
+              category={categories[1]}
+              index={1}
+              hoveredIndex={hoveredIndex}
+              setHoveredIndex={setHoveredIndex}
+              className="md:col-span-5"
+            />
+
+            {/* Card 3 — Small (spans 5 cols) */}
+            <BentoCard
+              category={categories[2]}
+              index={2}
+              hoveredIndex={hoveredIndex}
+              setHoveredIndex={setHoveredIndex}
+              className="md:col-span-5"
+            />
+
+            {/* Card 4 — Medium (spans 5 cols) */}
+            <BentoCard
+              category={categories[3]}
+              index={3}
+              hoveredIndex={hoveredIndex}
+              setHoveredIndex={setHoveredIndex}
+              className="md:col-span-5"
+            />
+
+            {/* Card 5 — Featured (spans 7 cols) */}
+            <BentoCard
+              category={categories[4]}
+              index={4}
+              hoveredIndex={hoveredIndex}
+              setHoveredIndex={setHoveredIndex}
+              className="md:col-span-7"
+            />
+
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* ===== BOTTOM EDITORIAL BANNER ===== */}
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="px-6 md:px-16 pb-20 md:pb-32"
+      >
+        <div className="max-w-[1400px] mx-auto border-t border-black/[0.06] pt-16 md:pt-24">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-end">
+            <div>
+              <p className="text-[#c49a6c] text-[10px] tracking-[5px] uppercase mb-4">New Drops Weekly</p>
+              <h2 className="font-bebas text-[clamp(32px,5vw,64px)] leading-[0.9] tracking-[1px] text-[#1a1714]">
+                Can&apos;t find<br />what you need?
+              </h2>
+            </div>
+            <div className="md:text-right">
+              <p className="text-[#7a7168] text-sm leading-relaxed mb-8 max-w-sm md:ml-auto">
+                We release new styles every week. Join the list to get early access to limited drops and exclusive pieces.
+              </p>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-3 border border-black/[0.15] px-8 py-4 text-[10px] tracking-[4px] uppercase hover:bg-[#1a1714] hover:text-[#f5f0e8] transition-all duration-500 group text-[#1a1714]"
+              >
+                Get in Touch
+                <motion.span
+                  className="inline-block"
+                  animate={{ x: [0, 4, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  →
+                </motion.span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
     </main>
   );
 };
+
+
+/* ===== BENTO CARD COMPONENT ===== */
+interface BentoCardProps {
+  category: {
+    title: string;
+    subtitle: string;
+    images: string[];
+    href: string;
+    count: number;
+    featured: boolean;
+  };
+  index: number;
+  hoveredIndex: number | null;
+  setHoveredIndex: (i: number | null) => void;
+  className: string;
+}
+
+function BentoCard({ category, index, hoveredIndex, setHoveredIndex, className }: BentoCardProps) {
+  const isHovered = hoveredIndex === index;
+  const anyHovered = hoveredIndex !== null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{
+        duration: 0.7,
+        delay: index * 0.08,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }}
+      className={`relative overflow-hidden group cursor-pointer rounded-sm border border-white/[0.04] ${className}`}
+      onMouseEnter={() => setHoveredIndex(index)}
+      onMouseLeave={() => setHoveredIndex(null)}
+    >
+      <Link href={category.href} className="absolute inset-0 z-20" />
+
+      {/* Image */}
+      <motion.div
+        animate={{
+          scale: isHovered ? 1.08 : 1,
+          filter: anyHovered && !isHovered ? "brightness(0.5)" : "brightness(0.7)"
+        }}
+        transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="absolute inset-0"
+      >
+        <img
+          src={category.images[0]}
+          alt={category.title}
+          className="w-full h-full object-cover"
+        />
+      </motion.div>
+
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-[1]" />
+
+      {/* Corner Accent Line */}
+      <motion.div
+        animate={{
+          width: isHovered ? 60 : 0,
+          opacity: isHovered ? 1 : 0
+        }}
+        transition={{ duration: 0.5 }}
+        className="absolute top-6 left-6 h-[1px] bg-[#c49a6c] z-[3]"
+      />
+
+      {/* Content */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 z-[3]">
+        {/* Index Number */}
+        <motion.span
+          animate={{ opacity: isHovered ? 1 : 0.15 }}
+          transition={{ duration: 0.4 }}
+          className="block font-bebas text-[48px] md:text-[64px] leading-none -mb-2 text-white/20"
+        >
+          {String(index + 1).padStart(2, "0")}
+        </motion.span>
+
+        {/* Title */}
+        <motion.h3
+          animate={{
+            y: isHovered ? -4 : 0,
+            letterSpacing: isHovered ? "6px" : "3px"
+          }}
+          transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="font-bebas text-[28px] md:text-[40px] leading-none tracking-[3px] uppercase text-white"
+        >
+          {category.title}
+        </motion.h3>
+
+        {/* Subtitle + Count */}
+        <div className="flex items-center justify-between mt-3">
+          <motion.span
+            animate={{ opacity: isHovered ? 1 : 0.6 }}
+            transition={{ duration: 0.4 }}
+            className="text-[10px] tracking-[3px] uppercase text-white/70"
+          >
+            {category.subtitle}
+          </motion.span>
+
+          <motion.span
+            animate={{
+              opacity: isHovered ? 1 : 0,
+              x: isHovered ? 0 : 10
+            }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="text-[10px] tracking-[3px] uppercase text-white flex items-center gap-2"
+          >
+            Explore
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </motion.span>
+        </div>
+
+        {/* Product Count Pill */}
+        <motion.div
+          animate={{
+            scale: isHovered ? 1 : 0.9,
+            opacity: isHovered ? 1 : 0
+          }}
+          transition={{ duration: 0.4 }}
+          className="absolute top-6 right-6 z-[3] border border-white/20 px-3 py-1 rounded-full"
+        >
+          <span className="text-[9px] tracking-[3px] uppercase text-white/80">{category.count} items</span>
+        </motion.div>
+      </div>
+
+      {/* Hover Border Glow */}
+      <motion.div
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.5 }}
+        className="absolute inset-0 rounded-sm border border-[#c49a6c]/30 pointer-events-none z-[4]"
+      />
+    </motion.div>
+  );
+}
 
 export default CollectionPage;

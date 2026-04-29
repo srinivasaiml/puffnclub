@@ -26,10 +26,10 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Puffnclub — Premium Men's T-Shirts",
-  description: "Redefining men's basics with premium fabric, modern design, and honest pricing. Born from street culture, built for everyday.",
+  title: "VORTEX — Premium Streetwear Collection",
+  description: "Redefining urban fashion with premium fabric, modern design, and street culture essence. Crafting the modern wardrobe for the next generation.",
   icons: {
-    icon: "/puffn-logo.svg",
+    icon: "/kite-logo.png",
   },
 };
 
@@ -42,7 +42,7 @@ export default function RootLayout({
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <head>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-        <link rel="icon" href="/puffn-logo.svg" />
+        <link rel="icon" href="/kite-logo.png" />
       </head>
       <body className={`${bebas.variable} ${spaceGrotesk.variable} font-space antialiased`}>
         <StoreProvider>

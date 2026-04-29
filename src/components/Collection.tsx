@@ -7,9 +7,14 @@ import { products } from '@/lib/data';
 const Collection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { setSelectedProduct, wishlist, toggleWishlist } = useStore();
-
+  const [dynamicProducts, setDynamicProducts] = React.useState<any[]>([]);
 
   useEffect(() => {
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(data => setDynamicProducts(data))
+      .catch(err => console.error("Failed to fetch dynamic products:", err));
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
