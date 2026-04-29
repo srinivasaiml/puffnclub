@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+export const dynamic = "force-static";
+
 export async function GET() {
   const collectionsPath = path.join(process.cwd(), 'public', 'collections');
   const categories = ['hoodies', 'jackets', 'shirts', 'tshirts', 'printed-tshirts'];
